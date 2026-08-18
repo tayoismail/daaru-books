@@ -1,0 +1,252 @@
+=====================================================================
+DAARU KUTUBUL ATHAARIYYAH - MANUAL TESTING GUIDE (Admin + Visitor)
+=====================================================================
+App: Daaru Kutubul Athaariyyah (Next.js 16 + React 19, file-based backend)
+Dev URL: http://localhost:3100
+Default admin: admin@example.com / admin123
+=====================================================================
+
+
+=====================================================================
+1. SETUP BEFORE YOU START
+=====================================================================
+
+Prerequisites
+- Node.js 18+ and npm.
+- No database needed - all data lives in JSON files inside the
+  "data" folder (books.json, orders.json, users.json, etc.).
+
+Step 1 - Install dependencies
+    npm install
+
+Step 2 - Environment file
+    copy .env.example .env        (Windows)
+    or: cp .env.example .env      (Mac/Linux)
+
+Fill in the file:
+  JWT_SECRET                       -> any long random string (needed for login/sessions)
+  NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY -> Flutterwave TEST public key (for checkout popup)
+  FLUTTERWAVE_SECRET_KEY           -> Flutterwave TEST secret key
+  FLUTTERWAVE_WEBHOOK_HASH         -> optional locally (skipped with a warning if empty)
+  Appwrite variables               -> NOT used yet, ignore them
+
+NOTE (Windows): if you have ever run `export NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY=...`
+or `export FLUTTERWAVE_SECRET_KEY=...` in your terminal, those shell values
+OVERRIDE the .env file. Run `unset NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY
+FLUTTERWAVE_SECRET_KEY` (or start a fresh terminal) before `npm run dev`,
+otherwise the checkout keeps using the old placeholder keys.
+
+Step 3 - Start the app
+    npm run dev
+    Open: http://localhost:3100
+
+- The default admin account is created automatically the first
+  time the server starts:  admin@example.com / admin123
+- Uploaded cover images are saved to:  public/uploads/
+- Optional production build:  npm run build   then   npm run start
+
+
+=====================================================================
+2. VISITOR TEST FLOW (SECTION BY SECTION)
+=====================================================================
+
+HOME PAGE  (/)
+1. Hero section
+   - Carousel autoplays between the welcome slide and 3 new-arrival
+     book covers. Test the dots, hover-pause, and that each book
+     banner links to its book detail page.
+   - Welcome slide background should have a slow Ken Burns zoom;
+     book slides a slightly faster one.
+2. Book rows under the hero
+   - New Arrivals, Bestsellers, then one row per category.
+   - Test the arrows (they disable at the row ends), swipe on a
+     narrow window, keyboard (focus the row, use arrow keys), and
+     the "See All" links.
+3. Discount badges
+   - Tafsir Ibn Kathir, Riyad As-Salihin and The Sealed Nectar
+     should show a red badge (-20% / -15% / -19%) and a
+     strikethrough original price on their cards.
+4. Categories tiles, testimonials, newsletter form.
+   - The newsletter only saves to data/newsletter.json (no email
+     is actually sent).
+5. Trust badges ("Why shop with Daaru Kutubul Athaariyyah") - should be just
+   before the footer.
+6. Language toggle (navbar) - switch to Arabic and verify every
+   section flips RTL (hero, rows, badges, headings).
+
+BOOKS LISTING  (/books)
+1. Search by title/author.
+2. Category dropdown filter.
+3. Sort: relevance / price low-high / price high-low / newest.
+4. Watch the skeleton loader during navigation.
+5. Pagination (next/previous, page numbers).
+6. "Popular Now" row at the bottom (arrows + See All).
+7. Empty state: search gibberish -> "No books found" + Clear
+   Filters button.
+
+BOOK DETAIL  (/books/<id>)  - click any card
+1. Breadcrumb, cover, rating stars, price (with strikethrough and
+   -X% badge for sale books), stock pill.
+2. Quantity stepper is clamped to stock.
+3. Add to Cart -> button flips to "Added".
+4. Buy Now -> adds to cart and redirects to the cart.
+5. "You May Also Like" related books grid.
+
+CART  (/cart)
+1. Add several books (including a sale book).
+2. Change quantities, remove items.
+3. Unit price shows the strikethrough "was" price for sale items.
+4. Subtotal/total match.
+5. Cart persists in a cookie - refresh the page.
+
+CHECKOUT  (/checkout)
+1. Submit empty/invalid fields -> validation errors.
+2. Fill the form -> Place Order -> Flutterwave popup opens
+   (requires test keys - see section 4).
+3. Complete with the test card -> lands on /order-success?reference=...
+4. Without keys: the order is still created and shows the
+   "payment gateway not configured" message. The order appears in
+   Admin > Orders as pending/unpaid.
+
+AUTH
+1. Sign up (/signup): create a customer account -> "please sign
+   in" -> login works, logout works, wrong password shows an
+   error, duplicate email is rejected.
+2. Confirm the new user appears in data/users.json.
+
+STATIC PAGES
+- /about, /contact (submit the form -> check data/contacts.json),
+  /privacy, /terms.
+- Type a bad URL -> the styled 404 page appears.
+
+
+=====================================================================
+3. ADMIN TEST FLOW
+=====================================================================
+
+LOGIN
+- Go to /login and sign in as admin@example.com / admin123.
+- You should be redirected to /admin.
+- A normal customer account must NOT access admin (it redirects
+  back to the storefront).
+
+DASHBOARD  (/admin)
+- Stat cards: total books, orders, revenue, expenses.
+- Monthly sales-vs-expenses chart.
+- Recent orders list.
+- Low stock alert (books with fewer than 5 copies).
+
+BOOKS  (/admin/books)
+1. Add a book:
+   - Fill the form and upload a cover image (check it lands in
+     public/uploads).
+   - Set a sale price (Original price > Price, e.g. 5000/4000) ->
+     expect a -20% badge everywhere.
+   - Try invalid input (original <= price) -> error message.
+2. Edit: change price/quantity/original price. Clear the original
+   price to remove the sale.
+3. Delete with the confirmation modal.
+4. Quantity changes create entries in data/inventoryLogs.json.
+
+ORDERS  (/admin/orders)
+- Search by customer, filter by status.
+- Open the details modal (items + customer).
+- Change status: pending -> processing -> shipped -> delivered.
+- Mark as Paid / Unpaid.
+- Print Invoice.
+- TRACKING: open an order, type a courier tracking number and click
+  Save (or leave it empty and Save to clear). When you switch the
+  status to "Shipped" WITH a tracking number saved, the customer is
+  emailed the tracking details (requires RESEND_API_KEY - see below;
+  without a key it logs a warning and the status still updates).
+
+EXPENSES  (/admin/expenses)
+- Add / edit / delete expenses with categories
+  (COGS / Utilities / Other).
+- Confirm the dashboard charts update.
+
+USERS  (/admin/users)
+- Placeholder page ("under construction") - nothing to test yet.
+
+ROLE GUARD
+- Logged out, or logged in as a customer: /admin* pages redirect
+  to /login.
+
+
+=====================================================================
+4. WHAT TO SET UP TO ENHANCE THE TEST
+=====================================================================
+
+1. Flutterwave TEST keys (free, ~2 minutes) - ALREADY CONFIGURED
+   - Go to dashboard.flutterwave.com -> Settings -> API.
+   - Toggle to TEST mode.
+   - Copy Public + Secret keys into your .env file.
+   - Flutterwave official test cards (from docs.flutterwave.com). NOTE:
+     the card "4084 0840 8408 4081" is a PAYSTACK test card - Flutterwave
+     rejects it with "Invalid card credential". Use these instead:
+       Verve (easiest, no OTP/PIN): 5061 4601 6697 6054 667
+         (exp 10/29, CVV 564) - completes straight away
+       Mastercard with PIN: 5531 8866 5214 2950
+         (exp 09/32, CVV 564, PIN 3310, then OTP 12345)
+       Visa 3DS:            4187 4274 1556 4246
+         (exp 09/32, CVV 828, OTP 12345)
+       Mastercard 3DS:      5438 8980 1456 0229
+         (exp 10/31, CVV 564, OTP 12345)
+   - Card that deliberately fails (Do Not Honour): 5143 0105 2233 9965
+     (exp 08/32, CVV 276)
+   - Verified end-to-end in this project: create order -> charge -> OTP
+     validate -> the order-success page auto-settles the order as Paid and
+     reduces stock (works on localhost without a webhook thanks to
+     server-side verification).
+
+1b. Email notifications (Resend - optional)
+   - Shipping notifications are sent when an order is marked Shipped
+     with a tracking number. No email library needed (plain REST API).
+   - Sign up free at resend.com, get an API key, and add to .env:
+       RESEND_API_KEY=re_...
+       RESEND_FROM_EMAIL="Daaru Kutubul Athaariyyah <orders@yourdomain.com>"
+     (Leave RESEND_FROM_EMAIL empty to use Resend's onboarding sandbox,
+     which only delivers to your own inbox until you verify a domain.)
+   - Without a key, the app logs "RESEND_API_KEY is not set" and the
+     status update still succeeds - notifications just don't go out.
+
+2. Webhook so orders automatically become "paid"
+   Flutterwave cannot reach "localhost", so either:
+   a) Use a tunnel so Flutterwave can call back:
+      - npx localtunnel --port 3100   (or ngrok)
+      - Paste the public URL into Flutterwave -> Settings ->
+        Webhooks, and set the secret hash in .env.
+      - Then run a real test payment.
+   b) Quick local shortcut (no tunnel):
+      - After a test order, edit data/orders.json and set
+        "paymentStatus" to "paid" (restart the app or refresh).
+      - This lets you test the paid states: order-success
+        confirmation, admin "Mark as Paid" UI, revenue charts.
+
+3. Real book covers
+   - Every seeded book has an empty imageUrl, so cards currently
+     show initials instead of covers.
+   - Upload real covers via Admin -> Books (they go to
+     public/uploads), or paste image URLs into data/books.json so
+     the hero banners, rows and cards look realistic.
+
+4. Reset / backup data
+   - Stop the dev server, then restore the seed data:
+     git checkout -- data
+   - Back up the data folder first if you created real records.
+
+5. Optional quality checks
+   - npm run lint
+   - npx tsc --noEmit
+   - Chrome DevTools (F12): Console (watch for errors), Network,
+     device toolbar for mobile layout.
+   - Lighthouse (DevTools -> Lighthouse): performance,
+     accessibility, SEO - best after a production build.
+   - Playwright (optional, not installed yet) for automated
+     end-to-end tests:
+     npm i -D @playwright/test
+     npx playwright install
+
+=====================================================================
+END OF GUIDE
+=====================================================================

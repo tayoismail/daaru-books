@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /checkout
+Disallow: /cart
+Disallow: /order-success
+Disallow: /uploads
+Disallow: /TESTING-GUIDE.txt

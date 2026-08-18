@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Dark green brand background -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a5c3a" />
+      <stop offset="1" stop-color="#0d3b26" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+
+  <!-- Subtle geometric pattern -->
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="2">
+    <path d="M600 40l34 67 74 10-54 52 13 74-67-35-67 35 13-74-54-52 74-10z" />
+    <circle cx="600" cy="315" r="180" />
+    <path d="M600 180l28 55 61 8-44 43 10 61-55-29-55 29 10-61-44-43 61-8z" />
+  </g>
+
+  <!-- Brand tile + star + book -->
+  <g transform="translate(560 140)">
+    <rect width="80" height="80" rx="20" fill="#ffffff" opacity="0.06" />
+    <rect x="8" y="8" width="64" height="64" rx="16" fill="#1a5c3a" />
+    <path d="M40 12l3 10.4 10.4 3-10.4 3-3 10.4-3-10.4-10.4-3 10.4-3z" fill="#c9a84c" />
+    <path d="M22 42l13.5 1v10l-13.5-1.2z" fill="#ffffff" opacity="0.95" />
+    <path d="M44.5 43l13.5-1v10l-13.5 1.2z" fill="#ffffff" opacity="0.75" />
+  </g>
+
+  <text x="600" y="360" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="58" font-weight="700" fill="#ffffff">
+    Daaru Kutubul Athaariyyah
+  </text>
+  <text x="600" y="415" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="#b8e0c8">
+    Your Gateway to Authentic Islamic Knowledge
+  </text>
+
+  <!-- Gold underline -->
+  <rect x="500" y="445" width="200" height="5" rx="2.5" fill="#c9a84c" />
+
+  <text x="600" y="505" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#ffffff" opacity="0.7">
+    Bilingual Islamic books — English &amp; Arabic · Nationwide delivery
+  </text>
+</svg>

@@ -1,0 +1,182 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+/* ------------------------------------------------------------------ */
+/* Design tokens                                                       */
+/* ------------------------------------------------------------------ */
+:root {
+  --background: #f8f9fa; /* off-white page background */
+  --foreground: #0f172a; /* slate-900 */
+  --color-primary: #1a5c3a; /* Deep Islamic Green */
+  --color-primary-light: #e8f5e9;
+  --color-gold: #c9a84c; /* Islamic Gold */
+  --color-footer: #1a1a2e;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: var(--font-noto-arabic), var(--font-inter), ui-sans-serif,
+    system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Noto Sans Arabic takes over whenever the page language is Arabic. */
+html[lang="ar"] body {
+  font-family: var(--font-noto-arabic), var(--font-inter), ui-sans-serif,
+    system-ui, sans-serif;
+}
+
+/* Form controls don't inherit font by default — force it for consistency. */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout helpers                                                      */
+/* ------------------------------------------------------------------ */
+/*
+ * Custom container: max-width 1280px, centered.
+ * Mirrors the `container` extension in tailwind.config.js.
+ */
+.container-daaru {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .container-daaru {
+    padding-inline: 2rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Hero banners: slow Ken Burns zoom                                   */
+/* ------------------------------------------------------------------ */
+.animate-ken-burns {
+  animation: ken-burns 26s ease-in-out infinite alternate;
+}
+
+@keyframes ken-burns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+/* Hero book cover: gentle floating motion (slides 2..N) */
+.animate-book-float {
+  animation: book-float 5s ease-in-out infinite;
+}
+
+@keyframes book-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* Navbar category dropdown: quick fade + slide down */
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-dropdown-in {
+  animation: dropdown-in 0.15s ease-out;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-ken-burns {
+    animation: none;
+  }
+  .animate-book-float {
+    animation: none;
+  }
+  .animate-dropdown-in {
+    animation: none;
+  }
+  .animate-ping {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Consistency defaults                                                */
+/* ------------------------------------------------------------------ */
+/* Standard card: rounded-xl + shadow-md */
+.card {
+  @apply rounded-xl shadow-md;
+}
+
+/* Book card: card + smooth hover lift (scale 1.02) */
+.book-card {
+  @apply rounded-xl shadow-md transition-all duration-300;
+}
+
+.book-card:hover {
+  @apply shadow-xl;
+  transform: scale(1.02);
+}
+
+/* Buttons: pill shape + color transitions */
+.btn {
+  @apply inline-flex items-center justify-center rounded-full transition-colors duration-200;
+}
+
+/* Skeleton loaders: shimmer sweep used by the books listing while loading */
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.65) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.6s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+

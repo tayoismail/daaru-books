@@ -1,0 +1,805 @@
+{
+  "appName": "Daaru Kutubul Athaariyyah",
+  "tagline": "Authentic Islamic books, delivered to your door.",
+  "nav": {
+    "home": "Home",
+    "books": "Books",
+    "about": "About",
+    "contact": "Contact",
+    "cart": "Cart",
+    "language": "العربية",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "admin": "Admin"
+  },
+  "hero": {
+    "badge": "Authentic • Reliable • Nationwide",
+    "title": "Your Gateway to Authentic Islamic Knowledge",
+    "subtitle": "Discover curated Islamic literature, Arabic books, and resources for every seeker. Bilingual experience — English & Arabic.",
+    "cta": "Explore Books",
+    "secondary": "Learn More",
+    "searchPlaceholder": "Search by title, author, or category...",
+    "searchButton": "Search",
+    "newArrivalsBadge": "Just In",
+    "viewBook": "View Book",
+    "sliderRegion": "Featured highlights",
+    "goToSlide": "Go to slide {{n}}"
+  },
+  "usps": {
+    "title": "Why shop with Daaru Kutubul Athaariyyah",
+    "subtitle": "A curated selection you can trust — from verified publishers to your doorstep.",
+    "authentic": {
+      "title": "Authentic & Verified",
+      "description": "Every title is sourced from trusted publishers and checked by our scholars before listing."
+    },
+    "delivery": {
+      "title": "Nationwide Delivery",
+      "description": "Fast, reliable shipping to all 36 states with careful, protective packaging."
+    },
+    "payments": {
+      "title": "Secure Payments",
+      "description": "Pay safely with Flutterwave — cards, bank transfer, and USSD."
+    },
+    "returns": {
+      "title": "Easy Returns",
+      "description": "Damaged or incorrect order? We replace it within 7 days, no questions asked."
+    }
+  },
+  "promo": {
+    "kicker": "Our Collection",
+    "text": "Free nationwide delivery on orders over ₦50,000 — across all 36 states",
+    "cta": "Shop Now"
+  },
+  "newArrivals": {
+    "title": "New Arrivals",
+    "subtitle": "The latest additions to our shelves."
+  },
+  "bestsellers": {
+    "title": "Our Bestsellers",
+    "subtitle": "The most loved titles in our collection this month.",
+    "addToCart": "Add to Cart",
+    "viewAll": "See All"
+  },
+  "categories": {
+    "title": "Browse by Category",
+    "subtitle": "Find exactly what you are looking for.",
+    "booksCount_one": "{{count}} book",
+    "booksCount_other": "{{count}} books"
+  },
+  "testimonials": {
+    "title": "What Our Community Is Reading",
+    "subtitle": "Join thousands of satisfied readers across Nigeria."
+  },
+  "newsletter": {
+    "title": "Subscribe to Our Newsletter",
+    "subtitle": "Get updates on new arrivals, exclusive offers, and Islamic knowledge resources.",
+    "placeholder": "Your email address",
+    "button": "Subscribe",
+    "success": "Thank you! Please check your inbox to confirm your subscription.",
+    "error": "Something went wrong. Please try again."
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign up",
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Sign in to continue shopping",
+    "signupTitle": "Create your account",
+    "signupSubtitle": "Join Daaru Kutubul Athaariyyah for faster checkout",
+    "name": "Full name",
+    "email": "Email address",
+    "password": "Password",
+    "createAccount": "Create Account",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "registered": "Account created! Please sign in to continue.",
+    "loginError": "Invalid email or password.",
+    "emailExists": "An account with this email already exists.",
+    "passwordMin": "Password must be at least 6 characters.",
+    "signupError": "Could not create account. Please try again."
+  },
+  "admin": {
+    "panel": "Admin Panel",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "titles": {
+      "dashboard": "Dashboard",
+      "report": "P&L Report",
+      "refunds": "Refunds",
+      "books": "Books",
+      "categories": "Categories",
+      "testimonials": "Testimonials",
+      "orders": "Orders",
+      "expenses": "Expenses",
+      "slides": "Slides",
+      "settings": "Settings",
+      "users": "Users",
+      "inventory": "Inventory History",
+      "customers": "Customers"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "report": "P&L Report",
+      "refunds": "Refunds",
+      "books": "Books",
+      "categories": "Categories",
+      "testimonials": "Testimonials",
+      "orders": "Orders",
+      "expenses": "Expenses",
+      "slides": "Slides",
+      "settings": "Settings",
+      "users": "Users",
+      "inventory": "Inventory History",
+      "customers": "Customers"
+    },
+    "period": {
+      "title": "Period",
+      "thisMonth": "This month",
+      "3m": "3 months",
+      "6m": "6 months",
+      "12m": "12 months",
+      "all": "All time",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply",
+      "vsPrevious": "Change vs the previous period"
+    },
+    "settings": {
+      "title": "Settings",
+      "intro": "Store branding and contact details shown across the site.",
+      "branding": "Store name",
+      "storeNameEn": "Store name (English)",
+      "storeNameAr": "Store name (Arabic)",
+      "contact": "Contact details",
+      "contactEmail": "Contact email",
+      "contactPhone": "Contact phone",
+      "whatsappNumber": "WhatsApp number",
+      "whatsappHint": "Opens as",
+      "address": "Address",
+      "save": "Save Changes",
+      "saving": "Saving…",
+      "saved": "Store settings saved. Changes are live across the site.",
+      "error": "Something went wrong. Please try again."
+    },
+    "stats": {
+      "totalBooks": "Total Books",
+      "totalOrders": "Total Orders",
+      "totalRevenue": "Total Revenue",
+      "totalExpenses": "Total Expenses",
+      "netProfit": "Net Profit",
+      "revenue": "Revenue",
+      "received": "Cash Received",
+      "grossProfit": "Gross Profit",
+      "margin": "Margin",
+      "expensesLine": "Expenses: {{expenses}} · Refunds: {{refunds}}"
+    },
+    "charts": {
+      "monthly": "Monthly Sales vs Expenses",
+      "lastMonths_one": "Last {{count}} month",
+      "lastMonths_other": "Last {{count}} months",
+      "sales": "Sales",
+      "expenses": "Expenses",
+      "refunds": "Refunds",
+      "expenseBreakdown": "Expenses by Category",
+      "byCategory": "Cost of goods, utilities and other",
+      "recognizedSales": "Revenue is recognized when orders are delivered; refunds reduce it.",
+      "cashFlow": "Cash Flow",
+      "cashFlowSubtitle": "Cash in from paid orders vs cash out (expenses + refunds)."
+    },
+    "payments": {
+      "title": "Payments & Receivables",
+      "subtitle": "Cash movements and outstanding payments",
+      "received": "Received",
+      "cashOut": "Cash out",
+      "netCash": "Net cash",
+      "unpaid": "Unpaid ({{count}})",
+      "failed": "Failed ({{count}})",
+      "refunded": "Refunded"
+    },
+    "expenseCategories": {
+      "cogs": "Cost of Goods",
+      "utility": "Utilities",
+      "other": "Other"
+    },
+    "recentOrders": {
+      "title": "Recent Orders",
+      "latest_one": "Latest {{count}} order",
+      "latest_other": "Latest {{count}} orders",
+      "empty": "No orders yet."
+    },
+    "table": {
+      "order": "Order",
+      "customer": "Customer",
+      "total": "Total",
+      "status": "Status",
+      "date": "Date",
+      "view": "View"
+    },
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "payment": {
+      "unpaid": "Unpaid",
+      "paid": "Paid",
+      "failed": "Failed"
+    },
+    "lowStock": {
+      "title": "Low Stock Alert",
+      "subtitle": "Books with fewer than 5 copies",
+      "empty": "All books are well stocked.",
+      "copies": "copies left"
+    },
+    "orderDetails": {
+      "title": "Order Details",
+      "items": "Items"
+    },
+    "refunds": {
+      "title": "Refunds",
+      "amount": "Amount",
+      "date": "Date",
+      "reason": "Reason",
+      "reasonPlaceholder": "e.g. Returned or damaged book",
+      "record": "Record Refund",
+      "recording": "Recording...",
+      "empty": "No refunds recorded for this order.",
+      "delete": "Delete refund",
+      "deleting": "Deleting...",
+      "error": "Something went wrong. Please try again.",
+      "refundedOf": "Refunded {{refunded}} of {{total}}",
+      "remaining": "{{amount}} remaining refundable",
+      "fullyRefunded": "This order is fully refunded.",
+      "onlyPaid": "Refunds can only be recorded for paid orders.",
+      "total": "Total refunded",
+      "count": "Refunds recorded",
+      "restockedCount": "Books restocked",
+      "search": "Search refunds by order, customer or reason...",
+      "restocked": "Restocked",
+      "emptyAll": "No refunds recorded yet.",
+      "deleteTitle": "Delete this refund?",
+      "deleteText": "The {{amount}} refunded for order {{reference}} will be removed.",
+      "deleteRestockHint": "Books returned to stock by this refund will be deducted from stock again."
+    },
+    "report": {
+      "title": "Profit & Loss",
+      "subtitle": "Recognized revenue and costs for the selected period",
+      "revenue": "Revenue (delivered orders)",
+      "costOfGoods": "Cost of goods sold",
+      "returns": "returns",
+      "grossProfit": "Gross Profit",
+      "refundsOther": "Other refunds",
+      "cancelledRefunds": "cancelled orders",
+      "expenses": "Expenses",
+      "netProfit": "Net Profit",
+      "footnote": "Revenue recognized: {{recognized}} · Refunds of delivered orders: {{refunded}}",
+      "receivables": "Receivables",
+      "receivablesSubtitle": "Outstanding customer payments",
+      "expenseBreakdown": "Expenses by category",
+      "noExpenses": "No expenses in this period.",
+      "refundsInPeriod": "Refunds in this period",
+      "refundsInPeriodSubtitle": "Latest refunds recorded for the selected period",
+      "total": "Total {{amount}}",
+      "noRefunds": "No refunds in this period."
+    },
+    "expenses": {
+      "cards": {
+        "total": "Total Expenses",
+        "cogs": "Total COGS",
+        "utility": "Total Utilities",
+        "other": "Total Other"
+      },
+      "export": "Export CSV",
+      "addTitle": "Add Expense",
+      "addSubtitle": "Record a new business expense.",
+      "category": "Category",
+      "description": "Description",
+      "descriptionPlaceholder": "e.g. Stock purchase, electricity bill...",
+      "amount": "Amount",
+      "date": "Date",
+      "add": "Add Expense",
+      "adding": "Adding...",
+      "colCategory": "Category",
+      "colDescription": "Description",
+      "colAmount": "Amount",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "editTitle": "Edit Expense",
+      "update": "Update",
+      "updating": "Updating...",
+      "cancel": "Cancel",
+      "added": "Expense added successfully.",
+      "updated": "Expense updated successfully.",
+      "deleted": "Expense deleted.",
+      "empty": "No expenses recorded yet.",
+      "error": "Something went wrong. Please try again.",
+      "confirmDeleteTitle": "Delete this expense?",
+      "confirmDeleteText": "This will permanently remove \"{{description}}\". This action cannot be undone."
+    },
+    "orders": {
+      "search": "Search by customer name or email...",
+      "allStatuses": "All Statuses",
+      "allPayments": "All Payments",
+      "fromDate": "From",
+      "toDate": "To",
+      "clearFilters": "Clear Filters",
+      "export": "Export CSV",
+      "colItems": "Items",
+      "colPayment": "Payment",
+      "colQty": "Qty",
+      "unitPrice": "Unit Price",
+      "subtotal": "Subtotal",
+      "results_one": "{{count}} order",
+      "results_other": "{{count}} orders",
+      "empty": "No orders found. Try adjusting your filters.",
+      "error": "Something went wrong. Please try again.",
+      "saved": "Order updated successfully.",
+      "customerInfo": "Customer Information",
+      "paymentStatus": "Payment Status",
+      "markPaid": "Mark as Paid",
+      "markUnpaid": "Mark as Unpaid",
+      "printInvoice": "Print Invoice",
+      "trackingNumber": "Tracking Number",
+      "trackingPlaceholder": "e.g. GLS-4829150234",
+      "saveTracking": "Save",
+      "trackingHint": "Enter the courier tracking number before or when marking the order as shipped — the customer is emailed with it.",
+      "invoice": "Invoice",
+      "billedTo": "Billed To",
+      "thankYou": "Thank you for your order.",
+      "deliveryFee": "Delivery Fee",
+      "deliveryFeeHint": "Shipping charge for this order — included on the invoice.",
+      "saveDelivery": "Save",
+      "paymentMethod": "Payment method"
+    },
+    "books": {
+      "addBook": "Add Book",
+      "editBook": "Edit Book",
+      "deleteBook": "Delete Book",
+      "search": "Search by title, author or category...",
+      "colImage": "Image",
+      "colTitle": "Title",
+      "colAuthor": "Author",
+      "colPrice": "Price",
+      "colQty": "Quantity",
+      "colCategory": "Category",
+      "colActions": "Actions",
+      "image": "Book Cover",
+      "chooseImage": "Choose image",
+      "changeImage": "Change image",
+      "uploadHint": "PNG, JPG or WebP — up to 2 MB",
+      "titleEn": "Title (English)",
+      "titleAr": "Title (Arabic)",
+      "author": "Author",
+      "isbn": "ISBN",
+      "price": "Price",
+      "cost": "Cost price",
+      "costHint": "What you pay per copy (optional)",
+      "margin": "Margin",
+      "originalPrice": "Original price",
+      "originalPriceHint": "Leave empty for no discount",
+      "restock": "Restock",
+      "restockTitle": "Restock Book",
+      "restockCurrent_one": "Currently {{count}} copy in stock",
+      "restockCurrent_other": "Currently {{count}} copies in stock",
+      "restockQty": "Quantity to add",
+      "restockReason": "Reason (optional)",
+      "restockReasonPlaceholder": "e.g. New shipment from supplier",
+      "restockAdd": "Add Stock",
+      "restocking": "Adding...",
+      "restocked": "Stock updated successfully.",
+      "quantity": "Quantity",
+      "category": "Category",
+      "selectCategory": "Select a category",
+      "descriptionEn": "Description (English)",
+      "descriptionAr": "Description (Arabic)",
+      "other": "Other",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "saved": "Book saved successfully.",
+      "deleted": "Book deleted.",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "confirmDeleteTitle": "Delete this book?",
+      "confirmDeleteText": "This will permanently remove \"{{title}}\" from the catalog. This action cannot be undone.",
+      "empty": "No books found.",
+      "error": "Something went wrong. Please try again."
+    },
+    "slides": {
+      "intro": "Manage the homepage hero slider — featured books, banners, welcome text and autoplay.",
+      "featuredTitle": "Featured Books",
+      "featuredSubtitle": "Books shown as hero slides, in order. Leave empty to automatically feature the 3 newest in-stock titles.",
+      "addBook": "Add Book",
+      "addBookTitle": "Add a book to the slider",
+      "addBookSubtitle": "Search and pick an in-stock book to feature.",
+      "searchBooks": "Search by title or author...",
+      "noResults": "No books match your search.",
+      "allAdded": "All in-stock books are already featured.",
+      "noFeatured": "No featured books yet — the 3 newest in-stock titles will appear automatically.",
+      "removeBook": "Remove from slider",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "bannersTitle": "Banner Images",
+      "bannersSubtitle": "Background images cycled behind the book slides. Leave empty to use the built-in banners.",
+      "noBanners": "No custom banners yet — the built-in banner set is being used.",
+      "uploadBanner": "Upload banner",
+      "uploading": "Uploading...",
+      "removeBanner": "Remove banner",
+      "bannerHint": "PNG, JPG or WebP — up to 2 MB",
+      "welcomeTitle": "Welcome Slide",
+      "welcomeSubtitle": "Copy for the first slide. Leave a field blank to use the default text.",
+      "showWelcome": "Show welcome slide",
+      "en": "EN",
+      "ar": "ع",
+      "fieldBadge": "Badge",
+      "fieldTitle": "Title",
+      "fieldSubtitle": "Subtitle",
+      "fieldCta": "Primary button",
+      "fieldSecondary": "Secondary button",
+      "fieldSearchPlaceholder": "Search placeholder",
+      "fieldSearchButton": "Search button",
+      "fieldNewArrivalsBadge": "New-arrivals badge",
+      "fieldViewBook": "View-book button",
+      "autoplayTitle": "Autoplay",
+      "autoplaySubtitle": "Milliseconds between slides. Set to 0 to disable autoplay.",
+      "autoplayMs": "Autoplay interval (ms)",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "saved": "Slider settings saved.",
+      "error": "Something went wrong. Please try again.",
+      "bannerAdded": "Banner uploaded — press Save Changes to keep your other edits.",
+      "bannerRemoved": "Banner removed."
+    },
+    "categories": {
+      "intro": "Manage the categories shown across the storefront.",
+      "add": "Add Category",
+      "addTitle": "Add Category",
+      "editTitle": "Edit Category",
+      "colEnglish": "English",
+      "colArabic": "Arabic",
+      "colSlug": "Slug",
+      "colBooks": "Books",
+      "en": "English name",
+      "ar": "Arabic name",
+      "slugPreview": "Link slug",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "added": "Category added.",
+      "updated": "Category updated.",
+      "deleted": "Category deleted.",
+      "empty": "No categories yet.",
+      "error": "Something went wrong. Please try again.",
+      "confirmDeleteTitle": "Delete this category?",
+      "confirmDeleteText": "This will permanently remove \"{{name}}\" from the storefront. This action cannot be undone."
+    },
+    "testimonials": {
+      "intro": "Manage the customer reviews shown on the homepage.",
+      "add": "Add Testimonial",
+      "addTitle": "Add Testimonial",
+      "editTitle": "Edit Testimonial",
+      "colName": "Name",
+      "colHandle": "Handle",
+      "colReview": "Review",
+      "colRating": "Rating",
+      "name": "Full name",
+      "handle": "Handle (optional)",
+      "reviewEn": "Review (English)",
+      "reviewAr": "Review (Arabic)",
+      "rating": "Rating",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "added": "Testimonial added.",
+      "updated": "Testimonial updated.",
+      "deleted": "Testimonial deleted.",
+      "empty": "No testimonials yet.",
+      "error": "Something went wrong. Please try again.",
+      "confirmDeleteTitle": "Delete this testimonial?",
+      "confirmDeleteText": "This will permanently remove the review by \"{{name}}\". This action cannot be undone."
+    },
+    "inventory": {
+      "search": "Search by book or reason...",
+      "filterBook": "Filter by book",
+      "allBooks": "All Books",
+      "colBook": "Book",
+      "colChange": "Change",
+      "colReason": "Reason",
+      "deletedBook": "Deleted book",
+      "empty": "No inventory activity yet.",
+      "error": "Something went wrong. Please try again.",
+      "results_one": "{{count}} entry",
+      "results_other": "{{count}} entries",
+      "stats": {
+        "entries": "Total Entries",
+        "added": "Stock Added",
+        "removed": "Stock Removed"
+      }
+    },
+    "customers": {
+      "search": "Search by name, email or phone...",
+      "colCustomer": "Customer",
+      "colEmail": "Email",
+      "colOrders": "Orders",
+      "colSpent": "Total Spent",
+      "colLastOrder": "Last Order",
+      "empty": "No customers yet.",
+      "error": "Something went wrong. Please try again.",
+      "results_one": "{{count}} customer",
+      "results_other": "{{count}} customers",
+      "stats": {
+        "customers": "Customers",
+        "orders": "Total Orders",
+        "total": "Total Sales"
+      }
+    },
+    "comingSoon": "This module is under construction and will be available in the next update."
+  },
+  "book": {
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "quantity": "Quantity",
+    "decreaseQty": "Decrease quantity",
+    "increaseQty": "Increase quantity",
+    "buyNow": "Buy Now",
+    "description": "Description",
+    "categories": "Categories",
+    "isbn": "ISBN",
+    "sku": "SKU",
+    "related": "You May Also Like",
+    "relatedSubtitle": "Handpicked titles from the same collection.",
+    "reviews_one": "{{count}} review",
+    "reviews_other": "{{count}} reviews"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "subtitle": "Sorry, the page you are looking for does not exist or has been moved.",
+    "backHome": "Back to Home"
+  },
+  "error": {
+    "title": "Something Went Wrong",
+    "subtitle": "An unexpected error occurred. Please try again — or head back home.",
+    "backHome": "Back to Home"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "subtitle": "Review the titles in your cart before checking out.",
+    "empty": "Your cart is empty",
+    "emptySubtitle": "Browse our collection and add some titles you love.",
+    "browseBooks": "Browse Books",
+    "unitPrice": "Unit price",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "Free",
+    "total": "Total",
+    "items": "items",
+    "summary": "Order Summary",
+    "proceed": "Proceed to Checkout",
+    "continueShopping": "Continue shopping",
+    "remove": "Remove item",
+    "decreaseQty": "Decrease quantity",
+    "increaseQty": "Increase quantity"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "subtitle": "Enter your delivery details and complete your purchase.",
+    "details": "Delivery Details",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "address": "Shipping Address",
+    "placeOrder": "Place Order",
+    "placing": "Processing...",
+    "orderSummary": "Order Summary",
+    "total": "Total",
+    "secure": "Payments are secure and processed by Flutterwave.",
+    "paymentDescription": "Payment for Daaru Kutubul Athaariyyah",
+    "error": "Something went wrong. Please try again.",
+    "orderCreatedNote": "Your order has been created ({{reference}}). Complete the payment to confirm it.",
+    "paymentFailed": "Payment failed. Please try again.",
+    "paymentClosed": "The payment window was closed. Your order is saved — you can retry payment.",
+    "paymentInitError": "Payment could not be initialized. Your order reference is {{reference}} — please retry.",
+    "noPaymentKey": "Your order was created ({{reference}}), but the payment gateway is not configured yet. Please contact us to complete your order."
+  },
+  "orderSuccess": {
+    "title": "Thank You for Your Order!",
+    "subtitle": "Your order has been received. A confirmation will follow once payment is confirmed.",
+    "orderNumber": "Order number",
+    "confirmed": "Payment confirmed",
+    "awaiting": "Awaiting payment confirmation",
+    "summary": "Order Summary",
+    "shippingTo": "Shipping to",
+    "total": "Total",
+    "continueShopping": "Continue Shopping",
+    "note": "Your books will be packed with care and dispatched as soon as payment is confirmed."
+  },
+  "books": {
+    "title": "All Books",
+    "subtitle": "Browse our full collection of authentic Islamic literature.",
+    "searchPlaceholder": "Search by title or author...",
+    "category": "Category",
+    "allCategories": "All Categories",
+    "sort": "Sort",
+    "sortRelevance": "Relevance",
+    "sortPriceLow": "Price: Low to High",
+    "sortPriceHigh": "Price: High to Low",
+    "sortNewest": "Newest First",
+    "clearFilters": "Clear Filters",
+    "quickView": "Quick View",
+    "addToCart": "Add to Cart",
+    "addedToCart": "Added",
+    "inStock_one": "{{count}} copy in stock",
+    "inStock_other": "{{count}} copies in stock",
+    "outOfStock": "Out of Stock",
+    "close": "Close",
+    "results_one": "{{count}} book",
+    "results_other": "{{count}} books",
+    "page": "Page {{page}} of {{total}}",
+    "previous": "Previous",
+    "next": "Next",
+    "empty": "No books found. Try adjusting your filters.",
+    "loading": "Loading books...",
+    "popular": "Popular Now",
+    "popularSubtitle": "Favourites our readers keep coming back to."
+  },
+
+  "footer": {
+    "description": "Your trusted source for authentic Islamic books.",
+    "quickLinks": "Quick Links",
+    "categories": "Categories",
+    "contact": "Contact Us",
+    "followUs": "Follow Us",
+    "newsletter": "Subscribe to Newsletter",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "about": {
+    "title": "About Daaru Kutubul Athaariyyah",
+    "subtitle": "Bringing authentic Islamic knowledge to your doorstep since 2020.",
+    "storyTitle": "Our Story",
+    "story": "Daaru Kutubul Athaariyyah (House of Books on the Athar) began in 2020 as a small weekend stall in Lagos, with a handful of carefully chosen books and a simple belief: authentic Islamic knowledge should be easy to find, fairly priced, and delivered with care. Word spread, and what started as a stall grew into a nationwide online bookstore serving readers across all 36 states — yet every title is still hand-picked and verified the same way it was on day one.",
+    "missionTitle": "Our Mission",
+    "mission": "To make authentic Islamic literature accessible to every home — carefully selected, fairly priced, and delivered with care.",
+    "teamTitle": "Meet the Team",
+    "teamSubtitle": "The people behind your orders.",
+    "team": {
+      "founder": {
+        "name": "Ustadh Abdulrahman Bello",
+        "role": "Founder & Curator",
+        "bio": "Selects and verifies every title that reaches the shelves."
+      },
+      "operations": {
+        "name": "Aminah Sadiq",
+        "role": "Operations Lead",
+        "bio": "Keeps orders moving — from packing to nationwide delivery."
+      },
+      "community": {
+        "name": "Yusuf Abdullahi",
+        "role": "Community & Support",
+        "bio": "Answers your questions and makes sure every reader feels welcomed."
+      }
+    },
+    "valuesTitle": "What we stand for",
+    "values": {
+      "authenticity": {
+        "title": "Authenticity",
+        "text": "Only verified, authentic works from trusted scholars and publishers."
+      },
+      "community": {
+        "title": "Community",
+        "text": "Every purchase supports initiatives that spread beneficial knowledge."
+      },
+      "service": {
+        "title": "Service",
+        "text": "Fast delivery, honest pricing, and support that puts you first."
+      }
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Questions about an order, a title, or bulk purchases? We would love to hear from you.",
+    "name": "Your name",
+    "email": "Your email address",
+    "subject": "Subject",
+    "subjectPlaceholder": "What is your message about?",
+    "message": "Your message",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "sendAnother": "Send another message",
+    "success": "Thank you! Your message has been sent. We will reply within 24 hours.",
+    "error": "Something went wrong. Please try again.",
+    "phoneLabel": "Call us",
+    "emailLabel": "Email us",
+    "addressLabel": "Visit us",
+    "email": "hello@daarubooks.com",
+    "phone": "+234 800 000 0000",
+    "address": "12 Ahmadu Bello Way, Lagos, Nigeria"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "subtitle": "How we collect, use and protect your personal information.",
+    "sections": {
+      "intro": {
+        "title": "Overview",
+        "text": "Daaru Kutubul Athaariyyah respects your privacy. This policy explains what information we collect when you browse or shop with us, how it is used, and the choices you have."
+      },
+      "collection": {
+        "title": "Information We Collect",
+        "text": "We collect the information you provide when you place an order or contact us — your name, email address, phone number, shipping address, and order details. We also collect limited technical data (such as your browser type) to keep the site working."
+      },
+      "usage": {
+        "title": "How We Use Your Information",
+        "text": "Your information is used to process and deliver orders, respond to enquiries, send order updates, and — only with your consent — occasional newsletters about new arrivals and offers."
+      },
+      "sharing": {
+        "title": "Sharing Your Information",
+        "text": "We never sell your personal information. We share only what is necessary with trusted partners who help us run the store (payment processing and delivery), and only to the extent needed to provide our services."
+      },
+      "cookies": {
+        "title": "Cookies",
+        "text": "We use cookies and local storage to remember your language preference and keep items in your shopping cart. You can clear these at any time from your browser settings."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "text": "You may request a copy of the personal data we hold about you, ask us to correct it, or ask us to delete it. To make a request, contact us using the details on the Contact page."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "text": "Questions about this policy? Email {{email}} or call {{phone}}."
+      }
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "subtitle": "The terms that govern your use of Daaru Kutubul Athaariyyah.",
+    "sections": {
+      "intro": {
+        "title": "Agreement",
+        "text": "By using the Daaru Kutubul Athaariyyah website, you agree to these terms. If you do not agree with any part of them, please do not use the site."
+      },
+      "orders": {
+        "title": "Placing Orders",
+        "text": "All orders are subject to availability and confirmation. An order is confirmed once we have accepted it and (where applicable) received payment. We reserve the right to decline or cancel an order at any time."
+      },
+      "pricing": {
+        "title": "Pricing & Payment",
+        "text": "Prices are listed in Nigerian Naira (NGN) and include applicable taxes unless stated otherwise. Payment is processed securely by Flutterwave via card, bank transfer or USSD."
+      },
+      "shipping": {
+        "title": "Shipping",
+        "text": "We deliver nationwide. Delivery times are estimates and may vary. Risk of loss passes to you once the order is delivered to the address you provided."
+      },
+      "returns": {
+        "title": "Returns & Refunds",
+        "text": "If your order arrives damaged or incorrect, contact us within 7 days of delivery and we will replace it or refund you in full, no questions asked."
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "text": "To the maximum extent permitted by law, Daaru Kutubul Athaariyyah is not liable for indirect or consequential losses arising from the use of this site or the products purchased."
+      },
+      "changes": {
+        "title": "Changes to These Terms",
+        "text": "We may update these terms from time to time. The latest version will always be published on this page, and continued use of the site means you accept the updated terms."
+      },
+      "contact": {
+        "title": "Contact",
+        "text": "Questions about these terms? Email {{email}} or call {{phone}}."
+      }
+    }
+  },
+  "whatsapp": {
+    "label": "Chat with us on WhatsApp",
+    "tooltip": "Chat with us on WhatsApp — we're happy to help!",
+    "number": "2349059806656"
+  }
+}

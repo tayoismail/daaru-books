@@ -12,6 +12,7 @@ import {
   applySettingsToI18n,
   loadSettings,
 } from "@/lib/settingsClient";
+import { fetchCategories } from "@/lib/categoriesClient";
 import { updateCategories, type CategoryInfo } from "@/lib/categories";
 import type { StoreSettings } from "@/types";
 
@@ -79,8 +80,7 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
   const settings = await loadSettings(ctx.ctx);
   // Fetch live book categories from SQLite so the navbar, footer, and book
   // pages always show admin-managed categories (not the stale JSON seed).
-  const { db } = await import("@/lib/db");
-  const categories = db.categories.getAll();
+  const categories = await fetchCategories(ctx.ctx);
   updateCategories(categories);
   const appProps = await App.getInitialProps(ctx);
   return { ...appProps, settings, categories };

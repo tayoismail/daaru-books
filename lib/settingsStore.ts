@@ -1,11 +1,9 @@
-// NOTE: Server-only module (reads/writes data/settings.json via lib/db).
+// NOTE: Server-only module (reads/writes settings via SQLite).
 
-import { readJSON, writeJSON } from "@/lib/db";
+import { getDb } from "@/lib/sqlite-schema";
 import type { StoreSettings } from "@/types";
 
-const FILE = "settings.json";
-
-/** Built-in defaults — used when the settings file is missing/corrupt. */
+/** Built-in defaults — used when the settings row is missing/corrupt. */
 export const DEFAULT_SETTINGS: StoreSettings = {
   storeName: { en: "Daaru Kutubul Athaariyyah", ar: "دار الكتب الأثرية" },
   contactEmail: "hello@daarubooks.com",
@@ -15,10 +13,15 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   updatedAt: 0,
 };
 
-/** Current store settings (missing file → defaults). */
+/** Current store settings (missing row → defaults). */
 export async function readSettings(): Promise<StoreSettings> {
+  const db = getDb();
+  const row = db.prepare(`SELECT data FROM "settings" WHERE id = ?`).get("main") as { data: string } | undefined;
+  if (!row) {
+    return DEFAULT_SETTINGS;
+  }
   try {
-    const raw = await readJSON<Partial<StoreSettings>>(FILE);
+    const raw = JSON.parse(row.data) as Partial<StoreSettings>;
     return {
       ...DEFAULT_SETTINGS,
       ...raw,
@@ -29,7 +32,11 @@ export async function readSettings(): Promise<StoreSettings> {
   }
 }
 
-/** Persist store settings (atomic temp-file rename). */
+/** Persist store settings to SQLite. */
 export async function writeSettings(settings: StoreSettings): Promise<void> {
-  await writeJSON(FILE, settings);
+  const db = getDb();
+  db.prepare(`INSERT OR REPLACE INTO "settings" (id, data) VALUES (?, ?)`).run(
+    "main",
+    JSON.stringify(settings)
+  );
 }

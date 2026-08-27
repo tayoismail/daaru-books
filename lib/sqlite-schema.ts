@@ -31,6 +31,8 @@ export function getDb(): Database.Database {
 
   createTables(_db);
   seedCategoriesFromJson(_db);
+  seedConfigFromJson(_db, "slides", "slides.json");
+  seedConfigFromJson(_db, "settings", "settings.json");
   return _db;
 }
 
@@ -82,6 +84,39 @@ function seedCategoriesFromJson(db: Database.Database): void {
   });
   tx();
   console.log(`[seed] Imported categories from ${filePath} into SQLite`);
+}
+
+/**
+ * One-time seed: if a config table (slides/settings) is empty but the
+ * corresponding JSON file exists, import it as a single row.
+ */
+function seedConfigFromJson(
+  db: Database.Database,
+  tableName: string,
+  jsonFile: string
+): void {
+  const count = (db.prepare(`SELECT COUNT(*) AS n FROM "${tableName}"`).get() as { n: number }).n;
+  if (count > 0) return; // already seeded
+
+  const DATA_DIR =
+    process.env.DATA_DIR && process.env.DATA_DIR.trim() !== ""
+      ? process.env.DATA_DIR
+      : path.join(process.cwd(), "data");
+  const filePath = path.join(DATA_DIR, jsonFile);
+
+  let raw: unknown;
+  try {
+    const fsSync = require("fs") as typeof import("fs");
+    raw = JSON.parse(fsSync.readFileSync(filePath, "utf8"));
+  } catch {
+    return; // file missing or corrupt — skip seeding
+  }
+
+  db.prepare(`INSERT OR IGNORE INTO "${tableName}" (id, data) VALUES (?, ?)`).run(
+    "main",
+    JSON.stringify(raw)
+  );
+  console.log(`[seed] Imported ${jsonFile} into SQLite table "${tableName}"`);
 }
 
 function createTables(db: Database.Database): void {
@@ -212,6 +247,18 @@ function createTables(db: Database.Database): void {
       en TEXT NOT NULL DEFAULT '',
       ar TEXT NOT NULL DEFAULT '',
       createdAt INTEGER NOT NULL DEFAULT 0
+    );
+
+    -- Slides config (single-row)
+    CREATE TABLE IF NOT EXISTS slides (
+      id TEXT PRIMARY KEY DEFAULT 'main',
+      data TEXT NOT NULL DEFAULT '{}'
+    );
+
+    -- Settings config (single-row)
+    CREATE TABLE IF NOT EXISTS settings (
+      id TEXT PRIMARY KEY DEFAULT 'main',
+      data TEXT NOT NULL DEFAULT '{}'
     );
 
     -- Indexes for common queries

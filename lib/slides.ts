@@ -2,10 +2,8 @@
 // never be imported from client code — pages import it inside
 // getServerSideProps with a dynamic import, exactly like `lib/db`.
 
-import { readJSON, writeJSON } from "@/lib/db";
+import { getDb } from "@/lib/sqlite-schema";
 import type { BilingualText, SlidesConfig, SlidesWelcome } from "@/types";
-
-const FILE = "slides.json";
 
 export const WELCOME_KEYS = [
   "badge",
@@ -91,24 +89,27 @@ function mergeSlides(raw: unknown): SlidesConfig {
   };
 }
 
-/** Current slides config — missing file (not seeded yet) yields defaults. */
+/** Current slides config — missing data (not seeded yet) yields defaults. */
 export async function getSlidesConfig(): Promise<SlidesConfig> {
-  let raw: unknown;
-  try {
-    raw = await readJSON<unknown>(FILE);
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-      // Fresh deep copy — never hand out shared references to the default.
-      return mergeSlides(DEFAULT_SLIDES);
-    }
-    throw error;
+  const db = getDb();
+  const row = db.prepare(`SELECT data FROM "slides" WHERE id = ?`).get("main") as { data: string } | undefined;
+  if (!row) {
+    return mergeSlides(DEFAULT_SLIDES);
   }
-  return mergeSlides(raw);
+  try {
+    return mergeSlides(JSON.parse(row.data));
+  } catch {
+    return mergeSlides(DEFAULT_SLIDES);
+  }
 }
 
-/** Persist the config (atomic temp-file rename, like every other collection). */
+/** Persist the config to SQLite. */
 export async function saveSlidesConfig(config: SlidesConfig): Promise<void> {
-  await writeJSON(FILE, config);
+  const db = getDb();
+  db.prepare(`INSERT OR REPLACE INTO "slides" (id, data) VALUES (?, ?)`).run(
+    "main",
+    JSON.stringify(config)
+  );
 }
 
 // Serialize read-modify-write cycles on the config file, mirroring the

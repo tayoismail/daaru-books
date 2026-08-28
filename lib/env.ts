@@ -24,13 +24,26 @@ export const env = {
   appwriteApiKey: process.env.APPWRITE_API_KEY ?? "",
 };
 
-// Fail fast on missing server-side secrets in production instead of surfacing
-// opaque runtime errors later. Dev keeps working without a populated .env.
-if (process.env.NODE_ENV === "production") {
+/**
+ * Validate that required env vars are set. Called lazily at request time,
+ * NOT at module-import time — this avoids crashing Vercel's build step
+ * where NODE_ENV=production but env vars may not be in the build context.
+ */
+let validated = false;
+export function validateEnv(): void {
+  if (validated) return;
+  validated = true;
+
+  if (process.env.NODE_ENV !== "production") return;
+
   const missing = (
     [
       ["jwtSecret", env.jwtSecret],
       ["flutterwaveSecretKey", env.flutterwaveSecretKey],
+      ["appwriteEndpoint", env.appwriteEndpoint],
+      ["appwriteProjectId", env.appwriteProjectId],
+      ["appwriteDatabaseId", env.appwriteDatabaseId],
+      ["appwriteApiKey", env.appwriteApiKey],
     ] as const
   ).filter(([, value]) => value === "");
 

@@ -1,5 +1,7 @@
 import { Client, TablesDB, Storage } from "appwrite";
-import { env } from "@/lib/env";
+import { env, validateEnv } from "@/lib/env";
+
+validateEnv();
 
 const client = new Client()
   .setEndpoint(env.appwriteEndpoint)

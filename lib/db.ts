@@ -1,13 +1,11 @@
-// NOTE: Server-only module (imports Node builtins + better-sqlite3).
+// NOTE: Server-only module (imports Node builtins + Appwrite admin SDK).
 // Keep this out of client code — it fails the build if a client bundle
-// imports it (Turbopack enforces this).
+// imports it.
 //
-// Storage backend: SQLite via better-sqlite3.
-// The public API is identical to the previous JSON-file version so every
+// Storage backend: Appwrite Cloud Database.
+// The public API is identical to the previous SQLite version so every
 // API route, admin page, and dashboard computation works unchanged.
 
-import { promises as fs } from "fs";
-import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import type {
   Book,
@@ -22,102 +20,63 @@ import type {
   User,
 } from "@/types";
 import type { CategoryInfo } from "@/lib/categories";
-import { getDb } from "@/lib/sqlite-schema";
+import { adminTablesDB } from "@/lib/appwrite/server";
+import { env } from "@/lib/env";
 
-// ─── Data directory (still used for non-collection JSON files) ──────────
+// ─── Appwrite IDs ─────────────────────────────────────────────────────
 
-const DATA_DIR =
-  process.env.DATA_DIR && process.env.DATA_DIR.trim() !== ""
-    ? process.env.DATA_DIR
-    : path.join(process.cwd(), "data");
+const DB_ID = env.appwriteDatabaseId;
 
-// ─── Exports needed by slides.ts and settingsStore.ts ──────────────────
+/** Collection IDs — match the ids used in scripts/setup-appwrite.mjs */
+const COLLECTIONS = {
+  books: "books",
+  orders: "orders",
+  users: "users",
+  expenses: "expenses",
+  expenseCategories: "expenseCategories",
+  refunds: "refunds",
+  inventoryLogs: "inventoryLogs",
+  contacts: "contacts",
+  newsletter: "newsletter",
+  testimonials: "testimonials",
+  categories: "categories",
+  config: "config",
+} as const;
 
-export type CollectionName =
-  | "books"
-  | "orders"
-  | "users"
-  | "expenses"
-  | "expenseCategories"
-  | "refunds"
-  | "inventoryLogs"
-  | "contacts"
-  | "newsletter"
-  | "testimonials"
-  | "categories";
+// ─── Helpers ───────────────────────────────────────────────────────────
+
+export type CollectionName = keyof typeof COLLECTIONS;
 
 /** Generate a unique id (uuid v4). */
 export function generateId(): string {
   return uuidv4();
 }
 
-function resolvePath(file: string): string {
-  return path.isAbsolute(file) ? file : path.join(DATA_DIR, file);
-}
-
-/** Read a JSON file (relative to `data/`, or absolute) and parse it as `T`.
- *  Used by slides.ts and settingsStore.ts for non-collection config files. */
-export async function readJSON<T>(file: string): Promise<T> {
-  const filePath = resolvePath(file);
-  const raw = await fs.readFile(filePath, "utf8");
-  return JSON.parse(raw) as T;
-}
-
 /**
- * Write `data` to a JSON file (relative to `data/`). Atomic temp-file rename.
- * Used by slides.ts and settingsStore.ts for non-collection config files.
+ * Strip Appwrite metadata fields ($id, $collectionId, etc.) from a document
+ * and map $id → id so our types work unchanged.
  */
-export async function writeJSON<T>(file: string, data: T): Promise<void> {
-  const filePath = resolvePath(file);
-  const tmp = `${filePath}.tmp`;
-  await fs.writeFile(tmp, `${JSON.stringify(data, null, 2)}\n`, "utf8");
-  await fs.rename(tmp, filePath);
-}
-
-/**
- * Read a collection from SQLite. Kept for backward compatibility with
- * pages/index.tsx which calls `readCollection` directly in getServerSideProps.
- */
-export async function readCollection<T>(name: string): Promise<T[]> {
-  const db = getDb();
-  const tableName = resolveTableName(name);
-  const rows = db.prepare(`SELECT * FROM "${tableName}"`).all() as Record<string, unknown>[];
-  return rows.map(deserializeRow) as T[];
-}
-
-// ─── SQLite helpers ────────────────────────────────────────────────────
-
-/** Maps collection names to SQLite table names. */
-function resolveTableName(name: string): string {
-  const map: Record<string, string> = {
-    books: "books",
-    orders: "orders",
-    users: "users",
-    expenses: "expenses",
-    expenseCategories: "expenseCategories",
-    refunds: "refunds",
-    inventoryLogs: "inventoryLogs",
-    contacts: "contacts",
-    newsletter: "newsletter",
-    testimonials: "testimonials",
-    categories: "categories",
-  };
-  return map[name] ?? name;
+function stripMeta(doc: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(doc)) {
+    if (key.startsWith("$")) {
+      if (key === "$id") result.id = value;
+      // skip other $-prefixed metadata
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
 }
 
 /** Columns that store JSON arrays/objects as TEXT and need parsing on read. */
 const JSON_COLUMNS = new Set(["items", "restockedItems"]);
 
-/** Columns that store JSON arrays and need stringification on write. */
-function serializeValue(value: unknown): unknown {
-  if (value instanceof Date) return value.getTime();
-  if (Array.isArray(value) || (typeof value === "object" && value !== null && !Buffer.isBuffer(value))) {
-    return JSON.stringify(value);
-  }
-  return value;
-}
-
-/** Parse JSON columns back to native JS types when reading from SQLite. */
+/**
+ * Parse JSON columns back to native JS types when reading from Appwrite.
+ * Also handles the books collection where descriptionEn stores both
+ * descriptions as JSON {en, ar} due to the 16-attribute limit on free tier.
+ */
 function deserializeRow(row: Record<string, unknown>): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(row)) {
@@ -131,41 +90,63 @@ function deserializeRow(row: Record<string, unknown>): Record<string, unknown> {
       result[key] = value;
     }
   }
+  // Books: descriptionEn stores combined {en, ar} JSON — split back out
+  if (typeof result.descriptionEn === "string" && !result.descriptionAr) {
+    try {
+      const parsed = JSON.parse(result.descriptionEn as string);
+      if (parsed && typeof parsed === "object" && "en" in parsed && "ar" in parsed) {
+        result.descriptionEn = parsed.en ?? "";
+        result.descriptionAr = parsed.ar ?? "";
+      }
+    } catch {
+      // plain string — leave as-is
+    }
+  }
   return result;
 }
 
-/** Build an INSERT statement for a record. */
-function buildInsert(
-  tableName: string,
-  record: Record<string, unknown>
-): { sql: string; params: unknown[] } {
-  const keys = Object.keys(record);
-  const columns = keys.map((k) => `"${k}"`).join(", ");
-  const placeholders = keys.map(() => "?").join(", ");
-  const params = keys.map((k) => serializeValue(record[k]));
-  return {
-    sql: `INSERT INTO "${tableName}" (${columns}) VALUES (${placeholders})`,
-    params,
-  };
+/** Serialize complex values (arrays, objects) to JSON strings for Appwrite. */
+function serializeValue(value: unknown): unknown {
+  if (value instanceof Date) return value.getTime();
+  if (Array.isArray(value) || (typeof value === "object" && value !== null && !Buffer.isBuffer(value))) {
+    return JSON.stringify(value);
+  }
+  return value;
 }
 
-/** Build an UPDATE statement for a partial patch. */
-function buildUpdate(
-  tableName: string,
-  patch: Record<string, unknown>,
-  id: string
-): { sql: string; params: unknown[] } {
-  // Exclude `id` — it's always in the WHERE clause, never in SET.
-  const keys = Object.keys(patch).filter((k) => k !== "id");
-  const setClauses = keys.map((k) => `"${k}" = ?`);
-  const params = [
-    ...keys.map((k) => serializeValue(patch[k])),
-    id,
-  ];
-  return {
-    sql: `UPDATE "${tableName}" SET ${setClauses.join(", ")} WHERE id = ?`,
-    params,
-  };
+/**
+ * Serialize all fields in a record for Appwrite storage.
+ * For books, merges descriptionEn + descriptionAr into a single JSON field
+ * because the free tier limits attributes per collection to 16.
+ */
+function serializeRecord(record: Record<string, unknown>, collectionName?: string): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(record)) {
+    if (key === "id") continue; // Appwrite uses $id, not id
+    if (collectionName === "books" && key === "descriptionAr") {
+      // Skip — we merge into descriptionEn below
+      continue;
+    }
+    result[key] = serializeValue(value);
+  }
+  // Books: merge descriptions into descriptionEn as JSON
+  if (collectionName === "books" && record.descriptionAr !== undefined) {
+    result.descriptionEn = JSON.stringify({
+      en: record.descriptionEn ?? "",
+      ar: record.descriptionAr ?? "",
+    });
+  }
+  return result;
+}
+
+/**
+ * Read a collection from Appwrite. Kept for backward compatibility with
+ * pages/index.tsx which calls `readCollection` directly in getServerSideProps.
+ */
+export async function readCollection<T>(name: string): Promise<T[]> {
+  const colId = COLLECTIONS[name as CollectionName] ?? name;
+  const result = await adminTablesDB.listRows(DB_ID, colId);
+  return result.rows.map((doc) => deserializeRow(stripMeta(doc as Record<string, unknown>)) as T);
 }
 
 // ─── Collection API ────────────────────────────────────────────────────
@@ -182,67 +163,103 @@ function touch<T>(record: T): T {
 function collection<T extends { id: string; createdAt: number }>(
   name: CollectionName
 ) {
-  const tableName = resolveTableName(name);
+  const colId = COLLECTIONS[name];
 
   return {
-    getAll: (): T[] => {
-      const db = getDb();
-      const rows = db.prepare(`SELECT * FROM "${tableName}"`).all() as Record<string, unknown>[];
-      return rows.map(deserializeRow) as T[];
+    getAll: async (): Promise<T[]> => {
+      const { Query } = await import("appwrite");
+      // Fetch all documents (Appwrite paginates at 100 by default; fetch up to 1000)
+      const allDocs: T[] = [];
+      let offset = 0;
+      const limit = 100;
+      while (true) {
+        const result = await adminTablesDB.listRows(DB_ID, colId, [
+          Query.limit(limit),
+          Query.offset(offset),
+        ]);
+        const docs = result.rows.map(
+          (doc) => deserializeRow(stripMeta(doc as Record<string, unknown>)) as T
+        );
+        allDocs.push(...docs);
+        if (docs.length < limit) break;
+        offset += limit;
+      }
+      return allDocs;
     },
 
     getById: async (id: string): Promise<T | null> => {
-      const db = getDb();
-      const row = db
-        .prepare(`SELECT * FROM "${tableName}" WHERE id = ?`)
-        .get(id) as Record<string, unknown> | undefined;
-      return row ? (deserializeRow(row) as T) : null;
+      try {
+        const doc = await adminTablesDB.getRow(DB_ID, colId, id);
+        return deserializeRow(stripMeta(doc as Record<string, unknown>)) as T;
+      } catch {
+        return null;
+      }
     },
 
-    create: (
+    create: async (
       data: Omit<T, "id" | "createdAt"> & { id?: string }
     ): Promise<T> => {
-      const db = getDb();
       const record = {
         ...data,
         id: (data as Record<string, unknown>).id ?? generateId(),
         createdAt: Date.now(),
       } as unknown as T;
       const touched = touch(record) as Record<string, unknown>;
-      const { sql, params } = buildInsert(tableName, touched);
-      db.prepare(sql).run(...params);
-      return Promise.resolve(touched as unknown as T);
+      const docId = String(touched.id);
+      const serialized = serializeRecord(touched, name);
+      const doc = await adminTablesDB.createRow(DB_ID, colId, docId, serialized);
+      return deserializeRow(stripMeta(doc as Record<string, unknown>)) as unknown as T;
     },
 
     update: async (
       id: string,
       patch: Partial<Omit<T, "id" | "createdAt">>
     ): Promise<T | null> => {
-      const db = getDb();
-      const existing = db
-        .prepare(`SELECT * FROM "${tableName}" WHERE id = ?`)
-        .get(id) as Record<string, unknown> | undefined;
-      if (!existing) return null;
-
-      const merged = touch({ ...existing, ...patch }) as Record<string, unknown>;
-      const { sql, params } = buildUpdate(tableName, merged, id);
-      db.prepare(sql).run(...params);
-
-      // Re-read to return the full updated record
-      const updated = db
-        .prepare(`SELECT * FROM "${tableName}" WHERE id = ?`)
-        .get(id) as Record<string, unknown>;
-      return deserializeRow(updated) as unknown as T;
+      try {
+        // Read existing to merge
+        const existing = await adminTablesDB.getRow(DB_ID, colId, id);
+        const existingData = stripMeta(existing as Record<string, unknown>);
+        const merged = touch({ ...existingData, ...patch }) as Record<string, unknown>;
+        const serialized = serializeRecord(merged, name);
+        const doc = await adminTablesDB.updateRow(DB_ID, colId, id, serialized);
+        return deserializeRow(stripMeta(doc as Record<string, unknown>)) as unknown as T;
+      } catch {
+        return null;
+      }
     },
 
     remove: async (id: string): Promise<boolean> => {
-      const db = getDb();
-      const result = db
-        .prepare(`DELETE FROM "${tableName}" WHERE id = ?`)
-        .run(id);
-      return result.changes > 0;
+      try {
+        await adminTablesDB.deleteRow(DB_ID, colId, id);
+        return true;
+      } catch {
+        return false;
+      }
     },
   };
+}
+
+// ─── Find helpers (query by field) ─────────────────────────────────────
+
+async function findByField<T>(
+  collectionId: string,
+  fieldName: string,
+  fieldValue: string
+): Promise<T | null> {
+  const { Query } = await import("appwrite");
+  try {
+    const result = await adminTablesDB.listRows(
+      DB_ID,
+      collectionId,
+      [Query.equal(fieldName, fieldValue), Query.limit(1)]
+    );
+    if (result.rows.length === 0) return null;
+    return deserializeRow(
+      stripMeta(result.rows[0] as Record<string, unknown>)
+    ) as T;
+  } catch {
+    return null;
+  }
 }
 
 // ─── Typed per-collection API used by API routes ───────────────────────
@@ -252,22 +269,32 @@ export const db = {
   users: {
     ...collection<User>("users"),
     getByEmail: async (email: string): Promise<User | null> => {
-      const dbConn = getDb();
       const normalized = email.trim().toLowerCase();
-      const row = dbConn
-        .prepare(`SELECT * FROM "users" WHERE LOWER(email) = ?`)
-        .get(normalized) as Record<string, unknown> | undefined;
-      return row ? (deserializeRow(row) as unknown as User) : null;
+      // Appwrite query: case-insensitive email match
+      const { Query } = await import("appwrite");
+      try {
+        const result = await adminTablesDB.listRows(
+          DB_ID,
+          COLLECTIONS.users,
+          [Query.equal("email", normalized), Query.limit(1)]
+        );
+        if (result.rows.length === 0) return null;
+        return deserializeRow(
+          stripMeta(result.rows[0] as Record<string, unknown>)
+        ) as unknown as User;
+      } catch {
+        return null;
+      }
     },
   },
   orders: {
     ...collection<Order>("orders"),
     getByPaymentReference: async (ref: string): Promise<Order | null> => {
-      const dbConn = getDb();
-      const row = dbConn
-        .prepare(`SELECT * FROM "orders" WHERE paymentReference = ?`)
-        .get(ref) as Record<string, unknown> | undefined;
-      return row ? (deserializeRow(row) as unknown as Order) : null;
+      return findByField<Order>(
+        COLLECTIONS.orders,
+        "paymentReference",
+        ref
+      );
     },
   },
   expenses: collection<Expense>("expenses"),
@@ -278,45 +305,75 @@ export const db = {
   newsletter: {
     ...collection<NewsletterSubscriber>("newsletter"),
     getByEmail: async (email: string): Promise<NewsletterSubscriber | null> => {
-      const dbConn = getDb();
-      const row = dbConn
-        .prepare(`SELECT * FROM "newsletter" WHERE email = ?`)
-        .get(email) as Record<string, unknown> | undefined;
-      return row ? (deserializeRow(row) as unknown as NewsletterSubscriber) : null;
+      return findByField<NewsletterSubscriber>(
+        COLLECTIONS.newsletter,
+        "email",
+        email
+      );
     },
   },
   testimonials: collection<Testimonial>("testimonials"),
 
   /**
-   * Book categories — uses `slug` as the primary key. The SQLite table has
-   * extra `id` and `createdAt` columns that are managed internally.
+   * Book categories — uses `slug` as the primary key.
    */
   categories: {
-    getAll: (): CategoryInfo[] => {
-      const dbConn = getDb();
-      const rows = dbConn
-        .prepare(`SELECT * FROM "categories" ORDER BY rowid`)
-        .all() as Record<string, unknown>[];
-      return rows.map((row) => ({
-        slug: String(row.slug ?? ""),
-        en: String(row.en ?? ""),
-        ar: String(row.ar ?? ""),
-      }));
+    getAll: async (): Promise<CategoryInfo[]> => {
+      const { Query } = await import("appwrite");
+      const allDocs: CategoryInfo[] = [];
+      let offset = 0;
+      const limit = 100;
+      while (true) {
+        const result = await adminTablesDB.listRows(
+          DB_ID,
+          COLLECTIONS.categories,
+          [Query.limit(limit), Query.offset(offset)]
+        );
+        const docs = result.rows.map((doc) => {
+          const data = stripMeta(doc as Record<string, unknown>);
+          return {
+            slug: String(data.slug ?? ""),
+            en: String(data.en ?? ""),
+            ar: String(data.ar ?? ""),
+          };
+        });
+        allDocs.push(...docs);
+        if (docs.length < limit) break;
+        offset += limit;
+      }
+      return allDocs;
     },
 
     /** Replace the entire category list atomically. */
-    replaceAll: (list: CategoryInfo[]): void => {
-      const dbConn = getDb();
-      const tx = dbConn.transaction(() => {
-        dbConn.prepare(`DELETE FROM "categories"`).run();
-        const insert = dbConn.prepare(
-          `INSERT INTO "categories" (id, slug, en, ar, createdAt) VALUES (?, ?, ?, ?, ?)`
+    replaceAll: async (list: CategoryInfo[]): Promise<void> => {
+      const { Query } = await import("appwrite");
+      // Delete all existing categories
+      const existing = await adminTablesDB.listRows(
+        DB_ID,
+        COLLECTIONS.categories,
+        [Query.limit(100)]
+      );
+      for (const doc of existing.rows) {
+        await adminTablesDB.deleteRow(
+          DB_ID,
+          COLLECTIONS.categories,
+          doc.$id
         );
-        for (const cat of list) {
-          insert.run(cat.slug, cat.slug, cat.en, cat.ar, Date.now());
-        }
-      });
-      tx();
+      }
+      // Insert new categories
+      for (const cat of list) {
+        await adminTablesDB.createRow(
+          DB_ID,
+          COLLECTIONS.categories,
+          cat.slug, // use slug as document id
+          {
+            slug: cat.slug,
+            en: cat.en,
+            ar: cat.ar,
+            createdAt: Date.now(),
+          }
+        );
+      }
     },
   },
 };

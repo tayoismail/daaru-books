@@ -17,9 +17,10 @@ export const env = {
   // when unset (only delivers to your own inbox until a domain is verified).
   resendFromEmail: process.env.RESEND_FROM_EMAIL ?? "",
 
-  // Appwrite — not used yet; needed after migrating from the file-based backend
-  appwriteEndpoint: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT ?? "",
-  appwriteProjectId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID ?? "",
+  // Appwrite — database backend (server-only; no NEXT_PUBLIC_ prefix needed)
+  appwriteEndpoint: (process.env.APPWRITE_ENDPOINT || process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT) ?? "",
+  appwriteProjectId: (process.env.APPWRITE_PROJECT_ID || process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID) ?? "",
+  appwriteDatabaseId: process.env.APPWRITE_DATABASE_ID ?? "",
   appwriteApiKey: process.env.APPWRITE_API_KEY ?? "",
 };
 

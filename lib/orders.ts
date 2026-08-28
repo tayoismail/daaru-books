@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { env } from "@/lib/env";
-import type { Order } from "@/types";
+import { adminTablesDB } from "@/lib/appwrite/server";
+import type { Book, Order } from "@/types";
 
 // NOTE: Server-only module (imports lib/env). Never import from client code.
 
@@ -22,15 +23,17 @@ const settling = new Map<string, Promise<Order | null>>();
  * "Mark as Paid" action so all three paths stay in sync.
  */
 export async function reduceStockForOrder(order: Order, reason: string): Promise<void> {
-  // Use a SQL-level atomic decrement so concurrent settlements for different
-  // orders that share a book cannot race and double-reduce stock.
-  const { getDb } = await import("@/lib/sqlite-schema");
   for (const item of order.items) {
     if (item.quantity <= 0) continue;
-    const dbConn = getDb();
-    dbConn
-      .prepare(`UPDATE "books" SET quantity = MAX(0, quantity - ?), updatedAt = ? WHERE id = ?`)
-      .run(item.quantity, Date.now(), item.bookId);
+    // Read current stock, compute new value, update
+    const book = await db.books.getById(item.bookId);
+    if (book) {
+      const newQty = Math.max(0, book.quantity - item.quantity);
+      await db.books.update(item.bookId, {
+        quantity: newQty,
+        updatedAt: Date.now(),
+      } as Partial<Book>);
+    }
     await db.inventoryLogs.create({
       bookId: item.bookId,
       change: -item.quantity,

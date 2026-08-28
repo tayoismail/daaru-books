@@ -158,11 +158,11 @@ export default function BookCarousel({
         }
       });
 
-      const target = Math.min(
-        cards.length - 1,
-        Math.max(0, current + direction * count)
-      );
-      const targetRect = cards[target].getBoundingClientRect();
+      const target = current + direction * count;
+      // Wrap around: past the end → go to start; before start → go to end.
+      const wrapped =
+        ((target % cards.length) + cards.length) % cards.length;
+      const targetRect = cards[wrapped].getBoundingClientRect();
       // Horizontal-only scroll on the row itself. Unlike scrollIntoView this
       // never touches any other scroll container, so the page never moves
       // vertically. The delta is measured in physical viewport pixels, and
@@ -186,10 +186,10 @@ export default function BookCarousel({
   );
 
   // Autoplay: one card at a time, hover/pointer devices only, paused on
-  // hover/focus, and it never loops — the interval is dropped once the row
-  // hits the end (and recreated if the user scrolls back).
+  // hover/focus. Loops continuously — wraps back to the start when reaching
+  // the end.
   useEffect(() => {
-    if (!autoplayMs || autoplayMs <= 0 || atEnd) return;
+    if (!autoplayMs || autoplayMs <= 0) return;
     if (typeof window !== "undefined" && !window.matchMedia("(hover: hover)").matches) {
       return;
     }
@@ -198,7 +198,7 @@ export default function BookCarousel({
       scrollCards(1, 1);
     }, autoplayMs);
     return () => window.clearInterval(id);
-  }, [autoplayMs, atEnd, scrollCards]);
+  }, [autoplayMs, scrollCards]);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === (isRtl ? "ArrowLeft" : "ArrowRight")) {
@@ -253,13 +253,8 @@ export default function BookCarousel({
             <button
               type="button"
               onClick={() => pageBy(-1)}
-              disabled={atStart}
               aria-label={t("books.previous")}
-              className={`flex h-9 w-9 items-center justify-center rounded-full border transition-colors ${
-                atStart
-                  ? "cursor-default border-slate-200 text-slate-300"
-                  : "border-gold bg-gold/10 text-gold-700 hover:bg-gold hover:text-slate-900"
-              }`}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-gold bg-gold/10 text-gold-700 transition-colors hover:bg-gold hover:text-slate-900"
             >
               <FontAwesomeIcon
                 icon={isRtl ? faChevronRight : faChevronLeft}
@@ -269,13 +264,8 @@ export default function BookCarousel({
             <button
               type="button"
               onClick={() => pageBy(1)}
-              disabled={atEnd}
               aria-label={t("books.next")}
-              className={`flex h-9 w-9 items-center justify-center rounded-full border transition-colors ${
-                atEnd
-                  ? "cursor-default border-slate-200 text-slate-300"
-                  : "border-gold bg-gold/10 text-gold-700 hover:bg-gold hover:text-slate-900"
-              }`}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-gold bg-gold/10 text-gold-700 transition-colors hover:bg-gold hover:text-slate-900"
             >
               <FontAwesomeIcon
                 icon={isRtl ? faChevronLeft : faChevronRight}
@@ -293,7 +283,7 @@ export default function BookCarousel({
         onKeyDown={handleKeyDown}
         role="region"
         aria-label={title}
-        className="mt-6 flex snap-x snap-proximity gap-5 overflow-x-auto px-1 pb-2 outline-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:ring-2 focus-visible:ring-gold"
+        className="mt-6 flex snap-x snap-proximity gap-5 overflow-x-auto rounded-xl border border-slate-200 bg-slate-50/50 p-4 outline-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:ring-2 focus-visible:ring-gold"
       >
         {items.map((item, i) => (
           <div

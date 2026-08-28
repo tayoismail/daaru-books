@@ -1,9 +1,12 @@
-// NOTE: Server-only module. Reached through `lib/db.ts` (Node fs), so it must
-// never be imported from client code — pages import it inside
-// getServerSideProps with a dynamic import, exactly like `lib/db`.
+// NOTE: Server-only module. Uses Appwrite to persist slides config.
+// Never import from client code.
 
-import { getDb } from "@/lib/sqlite-schema";
+import { adminTablesDB } from "@/lib/appwrite/server";
+import { env } from "@/lib/env";
 import type { BilingualText, SlidesConfig, SlidesWelcome } from "@/types";
+
+const DB_ID = env.appwriteDatabaseId;
+const CONFIG_COL = "config";
 
 export const WELCOME_KEYS = [
   "badge",
@@ -91,25 +94,30 @@ function mergeSlides(raw: unknown): SlidesConfig {
 
 /** Current slides config — missing data (not seeded yet) yields defaults. */
 export async function getSlidesConfig(): Promise<SlidesConfig> {
-  const db = getDb();
-  const row = db.prepare(`SELECT data FROM "slides" WHERE id = ?`).get("main") as { data: string } | undefined;
-  if (!row) {
-    return mergeSlides(DEFAULT_SLIDES);
-  }
   try {
-    return mergeSlides(JSON.parse(row.data));
+    const doc = await adminTablesDB.getRow(DB_ID, CONFIG_COL, "slides-config");
+    const data = (doc as Record<string, unknown>).data;
+    if (typeof data === "string") {
+      return mergeSlides(JSON.parse(data));
+    }
+    return mergeSlides(DEFAULT_SLIDES);
   } catch {
     return mergeSlides(DEFAULT_SLIDES);
   }
 }
 
-/** Persist the config to SQLite. */
+/** Persist the config to Appwrite. */
 export async function saveSlidesConfig(config: SlidesConfig): Promise<void> {
-  const db = getDb();
-  db.prepare(`INSERT OR REPLACE INTO "slides" (id, data) VALUES (?, ?)`).run(
-    "main",
-    JSON.stringify(config)
-  );
+  try {
+    await adminTablesDB.updateRow(DB_ID, CONFIG_COL, "slides-config", {
+      data: JSON.stringify(config),
+    });
+  } catch {
+    // Document doesn't exist yet — create it
+    await adminTablesDB.createRow(DB_ID, CONFIG_COL, "slides-config", {
+      data: JSON.stringify(config),
+    });
+  }
 }
 
 // Serialize read-modify-write cycles on the config file, mirroring the

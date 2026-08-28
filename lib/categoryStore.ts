@@ -1,4 +1,4 @@
-// NOTE: Server-only module (reads/writes the SQLite categories table).
+// NOTE: Server-only module (reads/writes the categories via Appwrite).
 // Kept separate from lib/categoryInput.ts so the pure validation helpers can
 // be imported safely by client code.
 
@@ -12,5 +12,5 @@ export async function readCategoryList(): Promise<CategoryInfo[]> {
 
 /** Persist the category list (atomic delete-all + re-insert). */
 export async function writeCategoryList(list: CategoryInfo[]): Promise<void> {
-  db.categories.replaceAll(list);
+  await db.categories.replaceAll(list);
 }

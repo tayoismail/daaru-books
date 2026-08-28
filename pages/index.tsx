@@ -131,7 +131,7 @@ export async function getServerSideProps() {
   ]);
   const [all, categories, testimonials, slides] = await Promise.all([
     db.books.getAll(),
-    Promise.resolve(db.categories.getAll() as CategoryTile[]),
+    db.categories.getAll(),
     db.testimonials.getAll(),
     getSlidesConfig(),
   ]);
@@ -418,6 +418,193 @@ export default function Home({ books, categories, testimonials, slides }: HomePr
         </div>
       </section>
 
+      {/* Section — Categories (5-col: tall on ends, 2×3 middle, full viewport) */}
+      <section className="flex h-[85vh] flex-col overflow-hidden px-4 py-4 sm:container-daaru sm:px-8 sm:py-6">
+        <Reveal>
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-primary-800 sm:text-3xl">
+              {t("categories.title")}
+            </h2>
+            <div className="mx-auto mt-2 h-1 w-14 rounded-full bg-gold" />
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">
+              {t("categories.subtitle")}
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="mt-4 grid flex-1 grid-cols-1 gap-3 sm:grid-cols-5 sm:gap-4" style={{ gridTemplateRows: "1fr 1fr" }}>
+
+          {/* Col 1 — Aqeedah (tall, spans both rows) */}
+          <Reveal delay={0} className="sm:row-span-2">
+            <Link
+              href="/books?category=aqeedah"
+              className="group relative flex h-40 items-end overflow-hidden rounded-xl bg-[url('/categories/category-aqeedah.png')] bg-cover bg-center p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:h-full sm:items-center sm:text-center"
+            >
+              <div className="absolute inset-0 bg-black/40 transition-colors duration-300 group-hover:bg-black/50" />
+              <div className="absolute end-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                <FontAwesomeIcon icon={faBook} className="h-5 w-5 text-gold-200" />
+              </div>
+              <div className="relative">
+                <p className="text-lg font-bold text-white sm:text-xl">
+                  {categoryName("Aqeedah", locale)}
+                </p>
+                <p className="mt-1 text-xs text-white/75 sm:text-sm">
+                  {t("categories.booksCount", { count: books.filter((b) => b.category === "Aqeedah").length })}
+                </p>
+              </div>
+            </Link>
+          </Reveal>
+
+          {/* Row 1, Col 2 — Quran & Tafsir */}
+          <Reveal delay={60}>
+            <Link
+              href="/books?category=quran-tafsir"
+              className="group relative flex h-40 items-end overflow-hidden rounded-xl bg-[url('/categories/category-quran-tafsir.png')] bg-cover bg-center p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:h-full sm:items-center sm:text-center"
+            >
+              <div className="absolute inset-0 bg-black/40 transition-colors duration-300 group-hover:bg-black/50" />
+              <div className="absolute end-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                <FontAwesomeIcon icon={faQuran} className="h-5 w-5 text-gold-200" />
+              </div>
+              <div className="relative">
+                <p className="text-lg font-bold text-white">
+                  {categoryName("Quran & Tafsir", locale)}
+                </p>
+                <p className="mt-1 text-xs text-white/75">
+                  {t("categories.booksCount", { count: books.filter((b) => b.category === "Quran & Tafsir").length })}
+                </p>
+              </div>
+            </Link>
+          </Reveal>
+
+          {/* Row 1, Col 3 — Hadith */}
+          <Reveal delay={120}>
+            <Link
+              href="/books?category=hadith"
+              className="group relative flex h-40 items-end overflow-hidden rounded-xl bg-[url('/categories/category-hadith.png')] bg-cover bg-center p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:h-full sm:items-center sm:text-center"
+            >
+              <div className="absolute inset-0 bg-black/40 transition-colors duration-300 group-hover:bg-black/50" />
+              <div className="absolute end-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                <FontAwesomeIcon icon={faScroll} className="h-5 w-5 text-gold-200" />
+              </div>
+              <div className="relative">
+                <p className="text-lg font-bold text-white">
+                  {categoryName("Hadith", locale)}
+                </p>
+                <p className="mt-1 text-xs text-white/75">
+                  {t("categories.booksCount", { count: books.filter((b) => b.category === "Hadith").length })}
+                </p>
+              </div>
+            </Link>
+          </Reveal>
+
+          {/* Row 1, Col 4 — Arabic Language */}
+          <Reveal delay={180}>
+            <Link
+              href="/books?category=arabic-language"
+              className="group relative flex h-40 items-end overflow-hidden rounded-xl bg-[url('/categories/category-arabic.png')] bg-cover bg-center p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:h-full sm:items-center sm:text-center"
+            >
+              <div className="absolute inset-0 bg-black/40 transition-colors duration-300 group-hover:bg-black/50" />
+              <div className="absolute end-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                <FontAwesomeIcon icon={faLanguage} className="h-5 w-5 text-gold-200" />
+              </div>
+              <div className="relative">
+                <p className="text-lg font-bold text-white">
+                  {categoryName("Arabic Language", locale)}
+                </p>
+                <p className="mt-1 text-xs text-white/75">
+                  {t("categories.booksCount", { count: books.filter((b) => b.category === "Arabic Language").length })}
+                </p>
+              </div>
+            </Link>
+          </Reveal>
+
+          {/* Col 5 — Spirituality (tall, spans both rows) */}
+          <Reveal delay={240} className="sm:row-span-2">
+            <Link
+              href="/books?category=spirituality"
+              className="group relative flex h-40 items-end overflow-hidden rounded-xl bg-[url('/categories/category-spirituality.png')] bg-cover bg-center p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:h-full sm:items-center sm:text-center"
+            >
+              <div className="absolute inset-0 bg-black/40 transition-colors duration-300 group-hover:bg-black/50" />
+              <div className="absolute end-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                <FontAwesomeIcon icon={faHeart} className="h-5 w-5 text-gold-200" />
+              </div>
+              <div className="relative">
+                <p className="text-lg font-bold text-white sm:text-xl">
+                  {categoryName("Spirituality", locale)}
+                </p>
+                <p className="mt-1 text-xs text-white/75 sm:text-sm">
+                  {t("categories.booksCount", { count: books.filter((b) => b.category === "Spirituality").length })}
+                </p>
+              </div>
+            </Link>
+          </Reveal>
+
+          {/* Row 2, Col 2 — Fiqh */}
+          <Reveal delay={300}>
+            <Link
+              href="/books?category=fiqh"
+              className="group relative flex h-40 items-end overflow-hidden rounded-xl bg-[url('/categories/category-fiqh.png')] bg-cover bg-center p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:h-full sm:items-center sm:text-center"
+            >
+              <div className="absolute inset-0 bg-black/40 transition-colors duration-300 group-hover:bg-black/50" />
+              <div className="absolute end-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                <FontAwesomeIcon icon={faScaleBalanced} className="h-5 w-5 text-gold-200" />
+              </div>
+              <div className="relative">
+                <p className="text-lg font-bold text-white">
+                  {categoryName("Fiqh", locale)}
+                </p>
+                <p className="mt-1 text-xs text-white/75">
+                  {t("categories.booksCount", { count: books.filter((b) => b.category === "Fiqh").length })}
+                </p>
+              </div>
+            </Link>
+          </Reveal>
+
+          {/* Row 2, Col 3 — Islamic History */}
+          <Reveal delay={360}>
+            <Link
+              href="/books?category=islamic-history"
+              className="group relative flex h-40 items-end overflow-hidden rounded-xl bg-[url('/categories/category-seeroh.png')] bg-cover bg-center p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:h-full sm:items-center sm:text-center"
+            >
+              <div className="absolute inset-0 bg-black/40 transition-colors duration-300 group-hover:bg-black/50" />
+              <div className="absolute end-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                <FontAwesomeIcon icon={faLandmark} className="h-5 w-5 text-gold-200" />
+              </div>
+              <div className="relative">
+                <p className="text-lg font-bold text-white">
+                  {categoryName("Islamic History", locale)}
+                </p>
+                <p className="mt-1 text-xs text-white/75">
+                  {t("categories.booksCount", { count: books.filter((b) => b.category === "Islamic History").length })}
+                </p>
+              </div>
+            </Link>
+          </Reveal>
+
+          {/* Row 2, Col 4 — Children's Books */}
+          <Reveal delay={420}>
+            <Link
+              href="/books?category=children-books"
+              className="group relative flex h-40 items-end overflow-hidden rounded-xl bg-[url('/categories/category-children.png')] bg-cover bg-center p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:h-full sm:items-center sm:text-center"
+            >
+              <div className="absolute inset-0 bg-black/40 transition-colors duration-300 group-hover:bg-black/50" />
+              <div className="absolute end-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                <FontAwesomeIcon icon={faChildren} className="h-5 w-5 text-gold-200" />
+              </div>
+              <div className="relative">
+                <p className="text-lg font-bold text-white">
+                  {categoryName("Children's Books", locale)}
+                </p>
+                <p className="mt-1 text-xs text-white/75">
+                  {t("categories.booksCount", { count: books.filter((b) => b.category === "Children's Books").length })}
+                </p>
+              </div>
+            </Link>
+          </Reveal>
+
+        </div>
+      </section>
+
       {/* Section 2 — Book rows (rhbooks-style arrangement, directly under the hero) */}
       <section className="bg-white py-10 md:py-12">
         <Reveal>
@@ -482,57 +669,6 @@ export default function Home({ books, categories, testimonials, slides }: HomePr
             </Reveal>
           );
         })}
-      </section>
-
-      {/* Section 3 — Categories (image-based tiles) */}
-      <section className="container-daaru py-16">
-        <Reveal>
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-primary-800 sm:text-3xl">
-              {t("categories.title")}
-            </h2>
-            <div className="mx-auto mt-3 h-1 w-14 rounded-full bg-gold" />
-            <p className="mx-auto mt-3 max-w-2xl text-slate-600">
-              {t("categories.subtitle")}
-            </p>
-          </div>
-        </Reveal>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category, index) => {
-            const tile = CATEGORY_TILES[category.slug];
-            return (
-              <Reveal key={category.slug} delay={index * 60}>
-                <Link
-                  href={`/books?category=${category.slug}`}
-                  className={`group relative flex h-36 items-end overflow-hidden rounded-xl bg-gradient-to-br p-5 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
-                    tile?.gradient ??
-                    "from-primary-700 via-primary-800 to-primary-950"
-                  }`}
-                >
-                  {/* Dark overlay for contrast */}
-                  <div className="absolute inset-0 bg-slate-950/25 transition-colors duration-300 group-hover:bg-slate-950/10" />
-                  {/* Icon overlay */}
-                  <div className="absolute end-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-                    <FontAwesomeIcon
-                      icon={tile?.icon ?? faBook}
-                      className="h-5 w-5 text-gold-200"
-                    />
-                  </div>
-                  <div className="relative">
-                    <p className="text-lg font-bold text-white">
-                      {categoryName(category.en, locale)}
-                    </p>
-                    <p className="mt-1 text-xs text-white/75">
-                      {t("categories.booksCount", {
-                        count: books.filter((b) => b.category === category.en).length,
-                      })}
-                    </p>
-                  </div>
-                </Link>
-              </Reveal>
-            );
-          })}
-        </div>
       </section>
 
       {/* Section 4 — Social proof / community reads */}

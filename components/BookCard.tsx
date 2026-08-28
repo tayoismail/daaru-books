@@ -44,14 +44,14 @@ export default function BookCard({ book, onQuickView }: BookCardProps) {
   return (
     <article className="book-card group flex h-full flex-col overflow-hidden bg-white">
       {/* Cover (150x200 style area; initials fallback when no image) */}
-      <div className="relative flex h-52 items-center justify-center overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-950">
+      <div className="relative flex h-52 items-center justify-center overflow-hidden bg-white pt-3">
         {book.imageUrl ? (
           <Image
             src={book.imageUrl}
             alt={localizedTitle}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-contain transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <>

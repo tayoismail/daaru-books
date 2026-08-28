@@ -1,7 +1,11 @@
-// NOTE: Server-only module (reads/writes settings via SQLite).
+// NOTE: Server-only module (reads/writes settings via Appwrite).
 
-import { getDb } from "@/lib/sqlite-schema";
+import { adminTablesDB } from "@/lib/appwrite/server";
+import { env } from "@/lib/env";
 import type { StoreSettings } from "@/types";
+
+const DB_ID = env.appwriteDatabaseId;
+const CONFIG_COL = "config";
 
 /** Built-in defaults — used when the settings row is missing/corrupt. */
 export const DEFAULT_SETTINGS: StoreSettings = {
@@ -15,28 +19,33 @@ export const DEFAULT_SETTINGS: StoreSettings = {
 
 /** Current store settings (missing row → defaults). */
 export async function readSettings(): Promise<StoreSettings> {
-  const db = getDb();
-  const row = db.prepare(`SELECT data FROM "settings" WHERE id = ?`).get("main") as { data: string } | undefined;
-  if (!row) {
-    return DEFAULT_SETTINGS;
-  }
   try {
-    const raw = JSON.parse(row.data) as Partial<StoreSettings>;
-    return {
-      ...DEFAULT_SETTINGS,
-      ...raw,
-      storeName: { ...DEFAULT_SETTINGS.storeName, ...raw.storeName },
-    };
+    const doc = await adminTablesDB.getRow(DB_ID, CONFIG_COL, "settings-config");
+    const data = (doc as Record<string, unknown>).data;
+    if (typeof data === "string") {
+      const raw = JSON.parse(data) as Partial<StoreSettings>;
+      return {
+        ...DEFAULT_SETTINGS,
+        ...raw,
+        storeName: { ...DEFAULT_SETTINGS.storeName, ...raw.storeName },
+      };
+    }
+    return DEFAULT_SETTINGS;
   } catch {
     return DEFAULT_SETTINGS;
   }
 }
 
-/** Persist store settings to SQLite. */
+/** Persist store settings to Appwrite. */
 export async function writeSettings(settings: StoreSettings): Promise<void> {
-  const db = getDb();
-  db.prepare(`INSERT OR REPLACE INTO "settings" (id, data) VALUES (?, ?)`).run(
-    "main",
-    JSON.stringify(settings)
-  );
+  try {
+    await adminTablesDB.updateRow(DB_ID, CONFIG_COL, "settings-config", {
+      data: JSON.stringify(settings),
+    });
+  } catch {
+    // Document doesn't exist yet — create it
+    await adminTablesDB.createRow(DB_ID, CONFIG_COL, "settings-config", {
+      data: JSON.stringify(settings),
+    });
+  }
 }

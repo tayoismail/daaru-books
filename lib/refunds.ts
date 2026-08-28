@@ -3,7 +3,6 @@
 // paths enforce the same rules and keep stock in sync.
 
 import { db } from "@/lib/db";
-import { getDb } from "@/lib/sqlite-schema";
 import type { Refund } from "@/types";
 
 export interface RefundInput {
@@ -118,12 +117,16 @@ export async function reverseRefund(refund: Refund): Promise<boolean> {
   if (restockedItems.length > 0) {
     const order = await db.orders.getById(refund.orderId);
     const reference = order?.paymentReference || order?.id || refund.orderId;
-    // Use atomic SQL decrement to avoid race conditions.
-    const dbConn = getDb();
     for (const restocked of restockedItems) {
-      dbConn
-        .prepare(`UPDATE "books" SET quantity = MAX(0, quantity - ?), updatedAt = ? WHERE id = ?`)
-        .run(restocked.quantity, Date.now(), restocked.bookId);
+      // Read current stock, compute new value, update
+      const book = await db.books.getById(restocked.bookId);
+      if (book) {
+        const newQty = Math.max(0, book.quantity - restocked.quantity);
+        await db.books.update(restocked.bookId, {
+          quantity: newQty,
+          updatedAt: Date.now(),
+        });
+      }
       await db.inventoryLogs.create({
         bookId: restocked.bookId,
         change: -restocked.quantity,

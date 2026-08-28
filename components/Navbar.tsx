@@ -231,7 +231,7 @@ export default function Navbar() {
                 {t("nav.login")}
               </Link>
               <Link
-                href="/register"
+                href="/signup"
                 className="btn bg-primary px-4 py-1.5 text-sm font-semibold text-white hover:bg-primary-800"
               >
                 {t("nav.register")}
@@ -357,7 +357,7 @@ export default function Navbar() {
                     {t("nav.login")}
                   </Link>
                   <Link
-                    href="/register"
+                    href="/signup"
                     className="btn bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-800"
                   >
                     {t("nav.register")}

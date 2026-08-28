@@ -80,11 +80,6 @@ export default function HeroSlider({
     }
   };
 
-  // RTL track: translateX(positive) moves the strip right — correct in RTL.
-  const transform = isRtl
-    ? `translateX(${index * 100}%)`
-    : `translateX(-${index * 100}%)`;
-
   const pause = () => setPaused(true);
   const resume = () => setPaused(false);
 
@@ -99,26 +94,25 @@ export default function HeroSlider({
       onBlur={resume}
       onKeyDown={handleKeyDown}
       tabIndex={-1}
-      className="relative outline-none"
+      className="relative min-h-[30rem] outline-none md:min-h-[32rem]"
     >
-      {/* Track */}
-      <div
-        className="flex transition-transform duration-700 ease-in-out"
-        style={{ transform }}
-      >
-        {slides.map((slide, i) => (
-          <div
-            key={i}
-            role="group"
-            aria-roledescription="slide"
-            aria-label={`${i + 1} / ${slideCount}`}
-            aria-hidden={i !== index}
-            className="w-full shrink-0"
-          >
-            {slide}
-          </div>
-        ))}
-      </div>
+      {/* Slides — stacked, fade in/out via opacity */}
+      {slides.map((slide, i) => (
+        <div
+          key={i}
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`${i + 1} / ${slideCount}`}
+          aria-hidden={i !== index}
+          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+            i === index
+              ? "opacity-100 z-10"
+              : "opacity-0 z-0 pointer-events-none"
+          }`}
+        >
+          {slide}
+        </div>
+      ))}
 
       {/* Dots */}
       {slideCount > 1 && (

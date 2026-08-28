@@ -1,4 +1,3 @@
-import categories from "../data/categories.json";
 import type { Locale } from "@/lib/i18n";
 
 export interface CategoryInfo {
@@ -11,12 +10,28 @@ export interface CategoryInfo {
 }
 
 /**
- * Category catalog — seeded from `data/categories.json` at import time, then
- * refreshed from SQLite on every server-side render via `updateCategories()`.
+ * Default category catalog — used as a fallback when Appwrite hasn't been
+ * seeded yet. Overwritten at runtime via `updateCategories()` (called from
+ * `_app.getInitialProps` with live data from Appwrite).
+ */
+export const DEFAULT_CATEGORIES: CategoryInfo[] = [
+  { slug: "quran-tafsir", en: "Quran & Tafsir", ar: "القرآن والتفسير" },
+  { slug: "hadith", en: "Hadith", ar: "الحديث" },
+  { slug: "fiqh", en: "Fiqh", ar: "الفقه" },
+  { slug: "arabic-language", en: "Arabic Language", ar: "اللغة العربية" },
+  { slug: "islamic-history", en: "Islamic History", ar: "التاريخ الإسلامي" },
+  { slug: "aqeedah", en: "Aqeedah", ar: "العقيدة" },
+  { slug: "spirituality", en: "Spirituality", ar: "الروحانيات" },
+  { slug: "children-books", en: "Children's Books", ar: "كتب الأطفال" },
+];
+
+/**
+ * Category catalog — defaults to `DEFAULT_CATEGORIES`, then refreshed from
+ * Appwrite on every server-side render via `updateCategories()`.
  * This keeps the navbar, footer, and book pages in sync with admin-managed
  * categories.
  */
-export let CATEGORIES: CategoryInfo[] = categories as CategoryInfo[];
+export let CATEGORIES: CategoryInfo[] = DEFAULT_CATEGORIES;
 
 /** Replace the in-memory category list (called from getServerSideProps). */
 export function updateCategories(list: CategoryInfo[]): void {

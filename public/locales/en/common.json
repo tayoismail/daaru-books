@@ -11,7 +11,8 @@
     "login": "Login",
     "register": "Register",
     "logout": "Logout",
-    "admin": "Admin"
+    "admin": "Admin",
+    "myOrders": "My Orders"
   },
   "hero": {
     "badge": "Authentic • Reliable • Nationwide",
@@ -542,6 +543,41 @@
         "total": "Total Sales"
       }
     },
+    "users": {
+      "intro": "Manage admin and customer accounts. Create, edit, or revoke access.",
+      "add": "Add User",
+      "addTitle": "Add New User",
+      "editTitle": "Edit User",
+      "colUser": "User",
+      "colEmail": "Email",
+      "colRole": "Role",
+      "colJoined": "Joined",
+      "name": "Full name",
+      "email": "Email",
+      "password": "Password",
+      "role": "Role",
+      "roleAdmin": "Admin",
+      "roleCustomer": "Customer",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "changePassword": "Change password",
+      "changePasswordTitle": "Change password for {{name}}",
+      "newPassword": "New password",
+      "updatePassword": "Update Password",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "you": "You",
+      "created": "User created successfully.",
+      "updated": "User updated successfully.",
+      "passwordChanged": "Password updated.",
+      "deleted": "User deleted.",
+      "empty": "No users yet.",
+      "error": "Something went wrong. Please try again.",
+      "confirmDeleteTitle": "Delete this user?",
+      "confirmDeleteText": "This will permanently remove the account for \"{{name}}\". They will lose access immediately. This action cannot be undone."
+    },
     "comingSoon": "This module is under construction and will be available in the next update."
   },
   "book": {
@@ -608,7 +644,11 @@
     "paymentFailed": "Payment failed. Please try again.",
     "paymentClosed": "The payment window was closed. Your order is saved — you can retry payment.",
     "paymentInitError": "Payment could not be initialized. Your order reference is {{reference}} — please retry.",
-    "noPaymentKey": "Your order was created ({{reference}}), but the payment gateway is not configured yet. Please contact us to complete your order."
+    "noPaymentKey": "Your order was created ({{reference}}), but the payment gateway is not configured yet. Please contact us to complete your order.",
+    "createAccount": "Create Your Account",
+    "createAccountHint": "Set a password to track your orders and reorder easily.",
+    "password": "Password",
+    "accountCreated": "Your account has been created! You can now log in with your email and password to track orders."
   },
   "orderSuccess": {
     "title": "Thank You for Your Order!",
@@ -801,5 +841,12 @@
     "label": "Chat with us on WhatsApp",
     "tooltip": "Chat with us on WhatsApp — we're happy to help!",
     "number": "2349059806656"
+  },
+  "myOrders": {
+    "title": "My Orders",
+    "subtitle": "Track your past orders and their status.",
+    "empty": "No orders yet",
+    "emptyHint": "Place your first order and it will appear here.",
+    "error": "Something went wrong loading your orders."
   }
 }

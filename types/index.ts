@@ -63,6 +63,8 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
+  /** Linked user account id — present when the customer created an account at checkout or was already logged in. */
+  userId?: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;

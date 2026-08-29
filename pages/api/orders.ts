@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { generatePaymentReference } from "@/lib/orders";
 import { clientIp, rateLimit } from "@/lib/rateLimit";
@@ -21,13 +22,14 @@ export default async function handler(
   }
 
   const body = (req.body ?? {}) as Record<string, unknown>;
-  const { name, email, phone, address, items } = body;
+  const { name, email, phone, address, password, items } = body;
 
   if (
     typeof name !== "string" ||
     typeof email !== "string" ||
     typeof phone !== "string" ||
     typeof address !== "string" ||
+    typeof password !== "string" ||
     !name.trim() ||
     !email.trim() ||
     !phone.trim() ||
@@ -35,7 +37,12 @@ export default async function handler(
   ) {
     return void res
       .status(400)
-      .json({ error: "Name, email, phone and shipping address are required" });
+      .json({ error: "Name, email, phone, password and shipping address are required" });
+  }
+  if (password.length < 6) {
+    return void res
+      .status(400)
+      .json({ error: "Password must be at least 6 characters" });
   }
 
   if (!Array.isArray(items) || items.length === 0) {
@@ -91,9 +98,29 @@ export default async function handler(
   const total = orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const paymentReference = generatePaymentReference();
 
+  // Auto-create customer account if one doesn't exist for this email.
+  // This links the order to a user so the customer can log in later to
+  // track orders. If the email already exists, the order is linked to
+  // the existing account without overwriting their password.
+  const normalizedEmail = email.trim().toLowerCase();
+  let existingUser = await db.users.getByEmail(normalizedEmail);
+  let accountCreated = false;
+
+  if (!existingUser) {
+    const hash = await bcrypt.hash(password, 10);
+    existingUser = await db.users.create({
+      name: name.trim(),
+      email: normalizedEmail,
+      password: hash,
+      role: "customer",
+    });
+    accountCreated = true;
+  }
+
   const order = await db.orders.create({
+    userId: existingUser.id,
     customerName: name.trim(),
-    customerEmail: email.trim().toLowerCase(),
+    customerEmail: normalizedEmail,
     customerPhone: phone.trim(),
     shippingAddress: address.trim(),
     items: orderItems,
@@ -109,5 +136,6 @@ export default async function handler(
     orderId: order.id,
     paymentReference,
     total,
+    accountCreated,
   });
 }

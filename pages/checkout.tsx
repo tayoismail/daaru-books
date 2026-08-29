@@ -4,7 +4,7 @@ import Head from "next/head";
 import { useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock, faShoppingBag } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faLock, faShoppingBag } from "@fortawesome/free-solid-svg-icons";
 import {
   loadFlutterwaveScript,
   openFlutterwaveCheckout,
@@ -34,6 +34,7 @@ export default function CheckoutPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [placing, setPlacing] = useState(false);
   // Order already created for this checkout session — reused on retry so we
@@ -43,6 +44,7 @@ export default function CheckoutPage() {
     reference: string;
     total: number;
     cartFingerprint: string;
+    accountCreated?: boolean;
   } | null>(null);
   const paidRef = useRef(false);
 
@@ -125,6 +127,7 @@ export default function CheckoutPage() {
           email,
           phone,
           address,
+          password,
           items: items.map((item) => ({
             bookId: item.bookId,
             quantity: item.quantity,
@@ -135,6 +138,7 @@ export default function CheckoutPage() {
         error?: string;
         paymentReference?: string;
         total?: number;
+        accountCreated?: boolean;
       };
       if (!response.ok) {
         setError(data.error ?? t("checkout.error"));
@@ -144,6 +148,7 @@ export default function CheckoutPage() {
         reference: data.paymentReference as string,
         total: data.total as number,
         cartFingerprint,
+        accountCreated: data.accountCreated,
       };
       setPending(next);
       await launchPayment(next.reference, next.total);
@@ -218,6 +223,11 @@ export default function CheckoutPage() {
               {t("checkout.orderCreatedNote", { reference: pending.reference })}
             </p>
           )}
+          {pending?.accountCreated && !error && (
+            <p className="mt-3 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
+              {t("checkout.accountCreated")}
+            </p>
+          )}
 
           <div className="mt-6 space-y-5">
             <div>
@@ -276,6 +286,33 @@ export default function CheckoutPage() {
                 onChange={(e) => setAddress(e.target.value)}
                 className={`${inputClass} resize-none`}
               />
+            </div>
+            <div className="rounded-xl border border-primary-200 bg-primary-50/50 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <FontAwesomeIcon icon={faKey} className="h-4 w-4 text-primary" />
+                <span className="text-sm font-semibold text-primary-800">
+                  {t("checkout.createAccount")}
+                </span>
+              </div>
+              <p className="mb-3 text-xs text-slate-500">
+                {t("checkout.createAccountHint")}
+              </p>
+              <div>
+                <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-700">
+                  {t("checkout.password")}
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
             </div>
           </div>
 

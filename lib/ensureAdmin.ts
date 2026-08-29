@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 
-const ADMIN_EMAIL = "admin@example.com";
-const ADMIN_PASSWORD = "admin123";
+const ADMIN_EMAIL = "admin@daarubooks.com";
+const ADMIN_PASSWORD = "0l4b4m1j1";
 
 let checked = false;
 

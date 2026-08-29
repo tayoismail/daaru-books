@@ -176,6 +176,20 @@ export default function Navbar() {
               </Link>
             </li>
           )}
+          {isAuthenticated && !isAdmin && (
+            <li>
+              <Link
+                href="/account/orders"
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  router.pathname === "/account/orders"
+                    ? "text-primary"
+                    : "text-slate-600"
+                }`}
+              >
+                {t("nav.myOrders")}
+              </Link>
+            </li>
+          )}
         </ul>
 
         {/* Right side */}
@@ -337,6 +351,18 @@ export default function Navbar() {
                 className="rounded-lg px-3 py-2.5 text-sm font-semibold text-gold-700 hover:bg-primary-50"
               >
                 {t("nav.admin")}
+              </Link>
+            )}
+            {isAuthenticated && !isAdmin && (
+              <Link
+                href="/account/orders"
+                className={`rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-primary-50 hover:text-primary ${
+                  router.pathname === "/account/orders"
+                    ? "bg-primary-50 text-primary"
+                    : "text-slate-700"
+                }`}
+              >
+                {t("nav.myOrders")}
               </Link>
             )}
             <div className="mt-2 flex flex-col gap-2 border-t border-slate-100 pt-3">

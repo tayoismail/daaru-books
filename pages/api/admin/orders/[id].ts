@@ -1,7 +1,12 @@
 import type { NextApiResponse } from "next";
 import { db } from "@/lib/db";
 import { requireAuth, type AuthenticatedRequest } from "@/lib/auth";
-import { sendOrderShippedEmail } from "@/lib/email";
+import {
+  sendOrderCancelledEmail,
+  sendOrderDeliveredEmail,
+  sendOrderProcessingEmail,
+  sendOrderShippedEmail,
+} from "@/lib/email";
 import { reduceStockForOrder } from "@/lib/orders";
 import { recordRefund, refundedTotalFor } from "@/lib/refunds";
 import type { OrderStatus, PaymentStatus } from "@/types";
@@ -110,12 +115,19 @@ async function handler(req: AuthenticatedRequest, res: NextApiResponse) {
       return void res.status(404).json({ error: "Order not found" });
     }
 
-    // Notify the customer by email when the order is marked as shipped AND a
-    // tracking number is available. Fired without awaiting so a slow email
-    // provider never delays the admin's response; send failures are logged
-    // inside lib/email and never affect the status update.
-    if (order && order.status === "shipped" && order.trackingNumber) {
-      void sendOrderShippedEmail(order);
+    // Notify the customer by email on status changes. Fired without awaiting
+    // so a slow email provider never delays the admin's response; send
+    // failures are logged inside lib/email and never affect the update.
+    if (order && order.status !== existing.status) {
+      if (order.status === "processing") {
+        void sendOrderProcessingEmail(order);
+      } else if (order.status === "shipped" && order.trackingNumber) {
+        void sendOrderShippedEmail(order);
+      } else if (order.status === "delivered") {
+        void sendOrderDeliveredEmail(order);
+      } else if (order.status === "cancelled") {
+        void sendOrderCancelledEmail(order);
+      }
     }
 
     // Marking an unpaid order as paid (e.g. a bank-transfer order settled
